@@ -1,14 +1,15 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Poppins } from "next/font/google";
 import "./globals.css";
+import Sidebar from "./component/Sidebar";
+import Topbar from "./component/Topbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["900", "800", "700", "600", "500"],
 });
 
 export const metadata = {
@@ -20,9 +21,30 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${poppins.variable} antialiased`}
       >
-        {children}
+       
+        <div className="flex min-h-screen overflow-hidden">
+          
+        
+            <Sidebar />
+         
+
+         
+          <div className="flex-1 flex flex-col min-w-0">
+           
+            <div>
+              <Topbar />
+            </div>
+
+         
+            <main className="flex-1 min-w-0 overflow-auto bg-[#CCDCE9] pt-6 pb-[50px] pl-6 pr-12">
+              <div className="w-full max-w-full overflow-x-hidden">
+                {children}
+              </div>
+            </main>
+          </div>
+        </div>
       </body>
     </html>
   );
