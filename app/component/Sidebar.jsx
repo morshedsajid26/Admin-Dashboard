@@ -24,27 +24,32 @@ const Sidebar = ({className}) => {
 
             <Li icon={<FaRegUserCircle className='w-6 h-6'/>}
             liText='User Management'
-             href='/userManagement'
+             href='/user/management'
             />
 
 
             <Li icon={<MdDashboard className='w-6 h-6'/>}
-            liText='Agent Management'/>
+            liText='Agent Management'
+            href='/agent/management'
+            />
 
 
             <Li icon={<FaListUl className='w-6 h-6'/>}
-            liText='Listings Management'/>
+            liText='Listings Management'
+            href='/listings/management'
+            />
 
             <Li icon={<MdOutlineHelpCenter className='w-6 h-6 '/>}
-            liText='Help & Reports'/>
+            liText='Help & Reports'
+            href='/s'
+            />
 
 
             <Li icon={<MdOutlineSettings className='w-6 h-6'/>}
-            liText='Settings'>
-                {/* <ul className='bg-white'>
-                    <Li className=""
-            liText='Help Center'/>
-                </ul> */}
+            liText='Settings'
+            href='/s'
+            >
+               
             </Li>
             
         </ul>
