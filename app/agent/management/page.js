@@ -6,16 +6,16 @@ import { AiOutlineStop } from "react-icons/ai";
 
 
 const baseRows = [
-  { sl: "#1231", name: "Annette Black",  avatar: "user1.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "10/28/12", status: "pending"  },
-  { sl: "#1232", name: "Jerome Bell",    avatar: "user2.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "01/05/12", status: "approved" },
-  { sl: "#1233", name: "Ronald Richards",avatar: "user3.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "08/02/19", status: "pending"  },
-  { sl: "#1234", name: "Dianne Russell", avatar: "user4.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "08/03/14", status: "pending"  },
-  { sl: "#1235", name: "Albert Flores",  avatar: "user5.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "02/11/12", status: "pending"  },
-  { sl: "#1236", name: "Eleanor Pena",   avatar: "user6.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "10/06/13", status: "pending"  },
-  { sl: "#1237", name: "Floyd Miles",    avatar: "user7.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "05/03/14", status: "rejected" },
-  { sl: "#1238", name: "Cody Fisher",    avatar: "user8.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "07/18/17", status: "pending"  },
-  { sl: "#1239", name: "Ralph Edwards",  avatar: "user9.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "04/04/18", status: "pending"  },
-  { sl: "#1240", name: "Devon Lane",     avatar: "user10.png", email:"bockely@att.com", mobile:"(907) 555-0101" , date: "08/21/15", status: "pending"  },
+  { sl: "#1231", name: "Annette Black",  avatar: "user1.png", vstatus:"Verified", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "10/28/12", status: "pending"  },
+  { sl: "#1232", name: "Jerome Bell",    avatar: "user2.png", vstatus:"Verified", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "01/05/12", status: "approved" },
+  { sl: "#1233", name: "Ronald Richards",avatar: "user3.png", vstatus:"Verified", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "08/02/19", status: "pending"  },
+  { sl: "#1234", name: "Dianne Russell", avatar: "user4.png", vstatus:" Not Verified", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "08/03/14", status: "pending"  },
+  { sl: "#1235", name: "Albert Flores",  avatar: "user5.png", vstatus:"Verified", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "02/11/12", status: "pending"  },
+  { sl: "#1236", name: "Eleanor Pena",   avatar: "user6.png", vstatus:"Verified", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "10/06/13", status: "pending"  },
+  { sl: "#1237", name: "Floyd Miles",    avatar: "user7.png", vstatus:" Not Verified", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "05/03/14", status: "rejected" },
+  { sl: "#1238", name: "Cody Fisher",    avatar: "user8.png", vstatus:"Verified", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "07/18/17", status: "pending"  },
+  { sl: "#1239", name: "Ralph Edwards",  avatar: "user9.png", vstatus:"Verified", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "04/04/18", status: "pending"  },
+  { sl: "#1240", name: "Devon Lane",     avatar: "user10.png", vstatus:" Not Verified", email:"bockely@att.com", mobile:"(907) 555-0101" , date: "08/21/15", status: "pending"  },
 ];
 
 
@@ -23,17 +23,7 @@ const TOTAL_PAGES = 100;
 const PAGE_SIZE = 10; 
 const TOTAL_ITEMS = TOTAL_PAGES * PAGE_SIZE;
 
-function Badge({ children, color }) {
-  const cls =
-    color === "green"
-      ? "text-[#0DBF69] bg-[#0DBF69]/10 ring-1 ring-[#0DBF69]/20"
-      : "text-[#DC4600] ring-1 ring-[#DC4600]/20 bg-[#DC4600]/10";
-  return (
-    <span className={`inline-flex items-center rounded-[5px] px-6 py-[9px] text-[16px] font-inter ${cls}`}>
-      {children}
-    </span>
-  );
-}
+
 
 
 
@@ -85,6 +75,7 @@ export default function AgentApprovalTable() {
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
             <th className="py-3 pr-4 w-[200px]">SL No</th>
             <th className="py-3 pr-4">Full Name</th>
+            <th className="py-3 pr-4">Verification Status</th>
             <th className="py-3 pr-4">Email</th>
             <th className="py-3 pr-4">Mobile Number</th>
             <th className="py-3 pr-2">Created Date</th>
@@ -113,7 +104,7 @@ export default function AgentApprovalTable() {
                     <span className="text-[#333333] font-inter text-[16px]">{r.name}</span>
                   </div>
                 </td>
-               
+               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.vstatus}</td>
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.email}</td>
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.mobile}</td>
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>

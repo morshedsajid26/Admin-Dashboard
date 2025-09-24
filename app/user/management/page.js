@@ -23,18 +23,6 @@ const TOTAL_PAGES = 100;
 const PAGE_SIZE = 10; 
 const TOTAL_ITEMS = TOTAL_PAGES * PAGE_SIZE;
 
-function Badge({ children, color }) {
-  const cls =
-    color === "green"
-      ? "text-[#0DBF69] bg-[#0DBF69]/10 ring-1 ring-[#0DBF69]/20"
-      : "text-[#DC4600] ring-1 ring-[#DC4600]/20 bg-[#DC4600]/10";
-  return (
-    <span className={`inline-flex items-center rounded-[5px] px-6 py-[9px] text-[16px] font-inter ${cls}`}>
-      {children}
-    </span>
-  );
-}
-
 
 
 function StopIcon() {
