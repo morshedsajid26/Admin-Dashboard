@@ -1,21 +1,19 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import Header from "../../component/Header";
-import { AiOutlineStop } from "react-icons/ai";
-
+import Header from "../component/Header";
 
 const baseRows = [
-  { sl: "#1231", name: "Annette Black",  avatar: "user1.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "10/28/12", status: "pending"  },
-  { sl: "#1232", name: "Jerome Bell",    avatar: "user2.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "01/05/12", status: "approved" },
-  { sl: "#1233", name: "Ronald Richards",avatar: "user3.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "08/02/19", status: "pending"  },
-  { sl: "#1234", name: "Dianne Russell", avatar: "user4.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "08/03/14", status: "pending"  },
-  { sl: "#1235", name: "Albert Flores",  avatar: "user5.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "02/11/12", status: "pending"  },
-  { sl: "#1236", name: "Eleanor Pena",   avatar: "user6.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "10/06/13", status: "pending"  },
-  { sl: "#1237", name: "Floyd Miles",    avatar: "user7.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "05/03/14", status: "rejected" },
-  { sl: "#1238", name: "Cody Fisher",    avatar: "user8.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "07/18/17", status: "pending"  },
-  { sl: "#1239", name: "Ralph Edwards",  avatar: "user9.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "04/04/18", status: "pending"  },
-  { sl: "#1240", name: "Devon Lane",     avatar: "user10.png", email:"bockely@att.com", mobile:"(907) 555-0101" , date: "08/21/15", status: "pending"  },
+  { sl: "#1231", name: "Annette Black",  avatar: "user1.png",  date: "10/28/12", status: "pending"  },
+  { sl: "#1232", name: "Jerome Bell",    avatar: "user2.png",  date: "01/05/12", status: "approved" },
+  { sl: "#1233", name: "Ronald Richards",avatar: "user3.png",  date: "08/02/19", status: "pending"  },
+  { sl: "#1234", name: "Dianne Russell", avatar: "user4.png",  date: "08/03/14", status: "pending"  },
+  { sl: "#1235", name: "Albert Flores",  avatar: "user5.png",  date: "02/11/12", status: "pending"  },
+  { sl: "#1236", name: "Eleanor Pena",   avatar: "user6.png",  date: "10/06/13", status: "pending"  },
+  { sl: "#1237", name: "Floyd Miles",    avatar: "user7.png",  date: "05/03/14", status: "rejected" },
+  { sl: "#1238", name: "Cody Fisher",    avatar: "user8.png",  date: "07/18/17", status: "pending"  },
+  { sl: "#1239", name: "Ralph Edwards",  avatar: "user9.png",  date: "04/04/18", status: "pending"  },
+  { sl: "#1240", name: "Devon Lane",     avatar: "user10.png", date: "08/21/15", status: "pending"  },
 ];
 
 
@@ -23,11 +21,52 @@ const TOTAL_PAGES = 100;
 const PAGE_SIZE = 10; 
 const TOTAL_ITEMS = TOTAL_PAGES * PAGE_SIZE;
 
-
-
-function StopIcon() {
+function Badge({ children, color }) {
+  const cls =
+    color === "green"
+      ? "text-[#0DBF69] bg-[#0DBF69]/10 ring-1 ring-[#0DBF69]/20"
+      : "text-[#DC4600] ring-1 ring-[#DC4600]/20 bg-[#DC4600]/10";
   return (
-    <AiOutlineStop className="h-6 w-6 text-white" />
+    <span className={`inline-flex items-center rounded-[5px] px-6 py-[9px] text-[16px] font-inter ${cls}`}>
+      {children}
+    </span>
+  );
+}
+
+function OutlineBtn({ children, tone = "slate", onClick }) {
+  const tones = {
+    blue: "text-[#49A0E6] ring-1 ring-inset ring-[#0DBF69]/20 hover:bg-[#49A0E6]/10",
+    red:   "text-[#DC4600] ring-1 ring-inset ring-[#DC4600]/20 hover:bg-[#DC4600]/10",
+    slate: "text-slate-600 ring-1 ring-inset ring-slate-300 hover:bg-slate-50",
+  };
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`inline-flex items-center rounded-md px-6 py-[9px] text-[16px] font-inter cursor-pointer ${tones[tone]} transition`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ActionCell({ status }) {
+  if (status === "approved") return <Badge color="blue">Approved</Badge>;
+  if (status === "rejected") return <Badge color="red">Rejected</Badge>;
+  return (
+    <div className="flex items-center gap-3 text-[16px] font-inter">
+      <OutlineBtn tone="blue">Approve</OutlineBtn>
+      <OutlineBtn tone="red">Reject</OutlineBtn>
+    </div>
+  );
+}
+
+function EyeIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" stroke="white" strokeWidth="2" />
+      <circle cx="12" cy="12" r="3" stroke="white" strokeWidth="2" />
+    </svg>
   );
 }
 
@@ -72,11 +111,10 @@ export default function AgentApprovalTable() {
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
             <th className="py-3 pr-4 w-[200px]">SL No</th>
-            <th className="py-3 pr-4">Full Name</th>
-            <th className="py-3 pr-4">Email</th>
-            <th className="py-3 pr-4">Mobile Number</th>
-            <th className="py-3 pr-2">Created Date</th>
-            <th className="py-3 pr-2">Action</th>
+            <th className="py-3 pr-4">Agent Name</th>
+            <th className="py-3 pr-4">Submission Date</th>
+            <th className="py-3 pr-4">Action</th>
+            <th className="py-3 pr-2">Details</th>
           </tr>
         </thead>
 
@@ -101,17 +139,15 @@ export default function AgentApprovalTable() {
                     <span className="text-[#333333] font-inter text-[16px]">{r.name}</span>
                   </div>
                 </td>
-               
-                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.email}</td>
-                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.mobile}</td>
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>
+                <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
                 <td className="py-4 pr-2">
                   <button
                     type="button"
                     aria-label={`View details of ${r.name}`}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#015093] hover:opacity-90 transition"
                   >
-                    <StopIcon />
+                    <EyeIcon />
                   </button>
                 </td>
               </tr>

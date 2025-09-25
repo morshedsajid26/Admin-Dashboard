@@ -25,8 +25,8 @@ const TOTAL_ITEMS = TOTAL_PAGES * PAGE_SIZE;
 
 function Badge({ children, color }) {
   const cls =
-    color === "green"
-      ? "text-[#0DBF69] bg-[#0DBF69]/10 ring-1 ring-[#0DBF69]/20"
+    color === "blue"
+      ? "text-[#49A0E6] bg-[#49A0E6]/10 ring-1 ring-[#0DBF69]/20"
       : "text-[#DC4600] ring-1 ring-[#DC4600]/20 bg-[#DC4600]/10";
   return (
     <span className={`inline-flex items-center rounded-[5px] px-6 py-[9px] text-[16px] font-inter ${cls}`}>
@@ -109,7 +109,7 @@ export default function AgentApprovalTable() {
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
         <Header/>
-      <table className="min-w-[720px] w-full text-left table-fixed">
+      <table className="min-w-[720px] w-full text-left table-fixed mt-[18px]">
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
             <th className="py-3 pr-4 w-[100px]">SL No</th>

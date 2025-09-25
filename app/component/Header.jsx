@@ -1,3 +1,5 @@
+"use client";
+import { usePathname } from 'next/navigation';
 import React from 'react'
 import { IoMdArrowBack } from 'react-icons/io'
 import { IoSearch } from "react-icons/io5";
@@ -12,11 +14,14 @@ let Title =({headerText})=>{return(
 
 
 )}
-
+ 
 const Header = ({}) => {
+  const pathname = usePathname();
+  const pathParts = pathname.split("/").filter(Boolean);
+  const headerText = pathParts.join(" ");
   return (
     <div className=' flex items-center justify-between'>
-        <Title headerText={`${window.location.pathname.split('/')[1]} ${window.location.pathname.split('/')[2]}`}/>
+    <Title headerText={headerText} />
 
 
        <div className='relative'>

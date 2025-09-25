@@ -2,20 +2,18 @@
 import React, { useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Header from "../../component/Header";
-import { AiOutlineStop } from "react-icons/ai";
-
+import {  FaArrowTurnUp } from "react-icons/fa6";
 
 const baseRows = [
-  { sl: "#1231", name: "Annette Black",  avatar: "user1.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "10/28/12", status: "pending"  },
-  { sl: "#1232", name: "Jerome Bell",    avatar: "user2.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "01/05/12", status: "approved" },
-  { sl: "#1233", name: "Ronald Richards",avatar: "user3.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "08/02/19", status: "pending"  },
-  { sl: "#1234", name: "Dianne Russell", avatar: "user4.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "08/03/14", status: "pending"  },
-  { sl: "#1235", name: "Albert Flores",  avatar: "user5.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "02/11/12", status: "pending"  },
-  { sl: "#1236", name: "Eleanor Pena",   avatar: "user6.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "10/06/13", status: "pending"  },
-  { sl: "#1237", name: "Floyd Miles",    avatar: "user7.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "05/03/14", status: "rejected" },
-  { sl: "#1238", name: "Cody Fisher",    avatar: "user8.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "07/18/17", status: "pending"  },
-  { sl: "#1239", name: "Ralph Edwards",  avatar: "user9.png", email:"bockely@att.com", mobile:"(907) 555-0101" ,  date: "04/04/18", status: "pending"  },
-  { sl: "#1240", name: "Devon Lane",     avatar: "user10.png", email:"bockely@att.com", mobile:"(907) 555-0101" , date: "08/21/15", status: "pending"  },
+ { sl: "#1231",   date: "10/28/12", status: "pending" , message:"I Didn't Receive My Referral...",  email:"bockely@att.com", mobile:"(907) 555-0101",   },
+  { sl: "#1232",   date: "01/05/12", status: "replied" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",   },
+  { sl: "#1233",   date: "08/02/19", status: "pending" , message:"I Didn't Receive My Referral...",  email:"bockely@att.com", mobile:"(907) 555-0101", status: "pending" , message:"I Didn't Receive My Referral...",  email:"bockely@att.com", mobile:"(907) 555-0101",   },
+  { sl: "#1235",  date: "02/11/12", status: "replied" , message:"I Didn't Receive My Referral...",  email:"bockely@att.com", mobile:"(907) 555-0101",   },
+  { sl: "#1236",   date: "10/06/13", status: "pending" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",    },
+  { sl: "#1237",   date: "05/03/14", status: "replied" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",   },
+  { sl: "#1238",   date: "07/18/17", status: "pending" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",    },
+  { sl: "#1239",   date: "04/04/18", status: "replied" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",     },
+  { sl: "#1240",  date: "08/21/15",  status: "pending" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",    },
 ];
 
 
@@ -23,11 +21,41 @@ const TOTAL_PAGES = 100;
 const PAGE_SIZE = 10; 
 const TOTAL_ITEMS = TOTAL_PAGES * PAGE_SIZE;
 
-
-
-function StopIcon() {
+function Badge({ children, color }) {
+  const cls =
+    color === "blue"
+      ? "text-[#49A0E6]  ring-1 ring-[#0DBF69]/20"
+      : "text-[#FFC42D] ring-1 ring-[#DC4600]/20 ";
   return (
-    <AiOutlineStop className="h-6 w-6 text-white" />
+    <span className={`inline-flex items-center rounded-full px-6 py-[9px] text-[16px] font-inter ${cls}`}>
+      {children}
+    </span>
+  );
+}
+
+
+
+function ActionCell({ status }) {
+  if (status === "pending") return <Badge color="red">Pending</Badge>;
+  if (status === "replied") return <Badge color="blue">Replied</Badge>;
+  return (
+    <div>
+
+    </div>
+  );
+}
+
+function EyeIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" stroke="white" strokeWidth="2" />
+      <circle cx="12" cy="12" r="3" stroke="white" strokeWidth="2" />
+    </svg>
+  );
+}
+function TurnIcon() {
+  return (
+   <FaArrowTurnUp className="text-white rotate-270 w-6 h-6" />
   );
 }
 
@@ -71,11 +99,12 @@ export default function AgentApprovalTable() {
       <table className="min-w-[720px] w-full text-left table-fixed mt-[18px]">
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
-            <th className="py-3 pr-4 w-[200px]">SL No</th>
-            <th className="py-3 pr-4">Full Name</th>
+            <th className="py-3 pr-4 w-[200px]">Ticket ID</th>
+            <th className="py-3 pr-4">Date</th>
             <th className="py-3 pr-4">Email</th>
             <th className="py-3 pr-4">Mobile Number</th>
-            <th className="py-3 pr-2">Created Date</th>
+            <th className="py-3 pr-2">Message</th>
+            <th className="py-3 pr-2">Status</th>
             <th className="py-3 pr-2">Action</th>
           </tr>
         </thead>
@@ -85,33 +114,32 @@ export default function AgentApprovalTable() {
             
            
             
-            const avatar = r.avatar.startsWith("/") ? r.avatar : `/${r.avatar}`;
+           
             return (
               <tr  className="align-middle">
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] w-[200px] whitespace-nowrap">
                   {r.sl}
                 </td>
-                <td className="py-4 pr-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={avatar}
-                      alt={r.name}
-                      className="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow"
-                    />
-                    <span className="text-[#333333] font-inter text-[16px]">{r.name}</span>
-                  </div>
-                </td>
-               
+                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.email}</td>
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.mobile}</td>
-                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>
-                <td className="py-4 pr-2">
+                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.message}</td>
+                
+                <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
+                <td className="py-4 pr-2 flex gap-3">
                   <button
                     type="button"
                     aria-label={`View details of ${r.name}`}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#FFC42D] hover:opacity-90 transition"
+                  >
+                    <EyeIcon />
+                  </button>
+                  <button
+                    type="button"
+                    
                     className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#015093] hover:opacity-90 transition"
                   >
-                    <StopIcon />
+                    <TurnIcon />
                   </button>
                 </td>
               </tr>

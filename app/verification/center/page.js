@@ -107,7 +107,7 @@ export default function AgentApprovalTable() {
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
         <Header/>
-      <table className="min-w-[720px] w-full text-left table-fixed">
+      <table className="min-w-[720px] w-full text-left table-fixed mt-[18px]">
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
             <th className="py-3 pr-4 w-[200px]">SL No</th>

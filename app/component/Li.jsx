@@ -1,10 +1,9 @@
-// components/Li.jsx
 "use client";
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const Li = ({ href = "/", liText, icon, className = "", children }) => {
+const Li = ({ href = "/", liText, icon, className, children }) => {
   const pathname = usePathname();
   const isActive =
     pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
