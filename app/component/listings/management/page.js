@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Header from "../../component/Header";
-import { AiOutlineStop } from "react-icons/ai";
+
 
 
 const baseRows = [
@@ -63,9 +63,12 @@ function ActionCell({ status }) {
   );
 }
 
-function StopIcon() {
+function EyeIcon() {
   return (
-    <AiOutlineStop className="h-6 w-6 text-white" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" stroke="white" strokeWidth="2" />
+      <circle cx="12" cy="12" r="3" stroke="white" strokeWidth="2" />
+    </svg>
   );
 }
 
@@ -153,7 +156,7 @@ export default function AgentApprovalTable() {
                     aria-label={`View details of ${r.name}`}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#015093] hover:opacity-90 transition"
                   >
-                    <StopIcon />
+                   <EyeIcon />
                   </button>
                 </td>
                 <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
