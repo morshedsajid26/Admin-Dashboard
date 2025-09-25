@@ -156,7 +156,7 @@ export default function AgentApprovalTable() {
                     aria-label={`View details of ${r.name}`}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#015093] hover:opacity-90 transition"
                   >
-                   <EyeIcon />
+                   <EyeIcon/>
                   </button>
                 </td>
                 <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
