@@ -52,10 +52,10 @@ const Sidebar = ({className}) => {
               setHelp(!help); 
               
             }}
-            className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] py-3 pr-[14px] transition-all duration-300 cursor-pointer pl-[31px] rounded-r-[5px]'
+            className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 pb-[2px]  transition-all duration-300 cursor-pointer rounded-r-[5px]'
             
             >
-              <div className='flex items-center gap-2.5'>
+              <div className='flex items-center gap-2.5 pl-[31px] pr-[14px] '>
                  <MdOutlineHelpCenter className='w-6 h-6 '/>
                 Help & Reports
               </div>
@@ -89,11 +89,12 @@ const Sidebar = ({className}) => {
               
               setSettings(!settings); 
             }} 
-            className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] py-3 pr-[14px] transition-all duration-300 cursor-pointer pl-[31px] rounded-r-[5px]'
+            className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 pb-[2px]   transition-all duration-300 cursor-pointer rounded-r-[5px]'
             
             
             >
-              <div className='flex items-center gap-2.5'>
+              <div className='flex items-center gap-2.5
+              pl-[31px] pr-[14px]'>
                  <MdOutlineSettings className='w-6 h-6 '/>
                 Settings
               </div>

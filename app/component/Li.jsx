@@ -33,8 +33,7 @@ const Li = ({
     block w-full pl-[31px] pr-[14px] py-3 text-[16px] rounded-r-[5px]
     ${isActiveChild
       ? "bg-[#015093] text-white hover:text-white"
-      : "text-[#0D0F12] "}
-    hover:bg-transparent hover:text-inherit
+      : "text-[#0D0F12] hover:bg-white hover:text-black"}
     focus:outline-none focus:ring-0
   `;
 
