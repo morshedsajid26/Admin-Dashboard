@@ -22,7 +22,7 @@ const Sidebar = ({className}) => {
             <Image className='h-[78px] w-[56px] mx-auto mb-6' src={logo} alt='logo'/>
         </div>
 
-        <ul className='flex h-[680px] flex-col gap-3'>
+        <ul className='sidebar flex h-[680px] flex-col gap-3'>
             <Li icon={<LuLayoutDashboard className='w-6 h-6'/>}
             liText='Dashboard'
             href='/'/>
@@ -42,6 +42,7 @@ const Sidebar = ({className}) => {
             <Li icon={<FaListUl className='w-6 h-6'/>}
             liText='Listings Management'
             href='/listings/management'
+            
             />
 
             
@@ -63,18 +64,19 @@ const Sidebar = ({className}) => {
   className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${help ? "rotate-180 top-6" : "top-1/2"}`} />
 
                              
-              <ul className={`submenu 
+              <ul className={`submenu mt-3 
   
                 
                 
-                ml-10 list-none ${help?"opacity-100 h-auto visible  ":"opacity-0 h-0 invisible "}`} >
+                 list-none ${help?"opacity-100 h-auto visible  ":"opacity-0 h-0 invisible "}`} >
                 <Li  liText='Help Center'
                 href='/help/center'
-                
+              variant='child'
                 
                 />
                 <Li liText='Reports'
                 href='/reports'
+                variant='child'
                 />
                
               </ul>
@@ -89,26 +91,33 @@ const Sidebar = ({className}) => {
             }} 
             className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] py-3 pr-[14px] transition-all duration-300 cursor-pointer pl-[31px] rounded-r-[5px]'
             
+            
             >
               <div className='flex items-center gap-2.5'>
-                 <MdOutlineHelpCenter className='w-6 h-6 '/>
+                 <MdOutlineSettings className='w-6 h-6 '/>
                 Settings
               </div>
              <IoIosArrowDown   className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${settings ? "rotate-180 top-6" : "top-1/2"}`} />
 
                              
-              <ul className={`submenu ml-10 ${settings?"opacity-100 h-auto visible  ":"opacity-0 h-0 invisible "}`} >
+              <ul className={`submenu mt-3  ${settings?"opacity-100 h-auto visible  ":"opacity-0 h-0 invisible "}`} >
+              
                 <Li  liText='Profile'
                 href='/profile'
+                variant='child'
                 />
                 <Li liText='About Us'
                 href='/about/us'
+                variant='child'
                 />
                  <Li liText='Terms & Conditions'
                 href='/terms/conditions'
+               variant='child'
+
                 />
                 <Li liText='Privacy Policy'
                 href='/privacy/policy'
+                variant='child'
                 />
               </ul>
              
