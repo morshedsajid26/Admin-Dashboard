@@ -3,9 +3,18 @@ import "./globals.css";
 import Sidebar from "./component/Sidebar";
 import Topbar from "./component/Topbar";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const geistSans = Geist({ 
+  variable: "--font-geist-sans", 
+  subsets: ["latin"] });
+  
+const geistMono = Geist_Mono({ 
+  variable: "--font-geist-mono", 
+  subsets: ["latin"] });
+
+const inter = Inter({ 
+  variable: "--font-inter", 
+  subsets: ["latin"] });
+
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],

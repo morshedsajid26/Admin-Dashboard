@@ -88,6 +88,7 @@ const Sidebar = ({className}) => {
            onClick={() => { 
               
               setSettings(!settings); 
+              
             }} 
             className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 pb-[2px]   transition-all duration-300 cursor-pointer rounded-r-[5px]'
             
