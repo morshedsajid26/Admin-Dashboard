@@ -9,8 +9,8 @@ const Li = ({
   icon,
   className = "",
   children,
-  variant = "root",   // "root" | "child"
-  exact = false,      // exact match চাইলে true
+  variant = "root", 
+  exact = false,      
 }) => {
   const pathname = usePathname();
 
@@ -28,7 +28,6 @@ const Li = ({
     ${isActiveRoot ? "bg-[#015093] text-white hover:text-white" : "bg-transparent text-[#0D0F12]"}
   `;
 
-  // child active = text-blue + left border, no bg
   const childStyle = `
     block w-full pl-[31px] pr-[14px] py-3 text-[16px] rounded-r-[5px]
     ${isActiveChild

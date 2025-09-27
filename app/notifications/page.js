@@ -15,6 +15,10 @@ const page = () => {
             <IoMdArrowBack className='w-6 h-6 text-[#015093]' />
         <h3 className='text-[#333333] text-[20px] font-inter font-semibold capitalize' >{pathParts[0] || ""}</h3>
         </div>
+
+        <div>
+          <p className='text-[#333333] text-[16px] font-inter font-semibold mt-[21px] '>Total 128 Notifications</p>
+        </div>
       
     </div>
   )
