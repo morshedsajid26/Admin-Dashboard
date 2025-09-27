@@ -1,6 +1,14 @@
-import React from 'react'
+"use client";
+import { useState } from 'react';
+import { FaRegEyeSlash } from 'react-icons/fa'
+import { IoEyeOutline } from 'react-icons/io5'
+
 
 const page = () => {
+
+  let [showPass,setShowPass]=useState(false);
+  let [showPass1,setShowPass1]=useState(false);
+  let [showPass2,setShowPass2]=useState(false);
   return (
     <div className='w-[481px]  flex flex-col items-center mx-auto mt-[26px]'>
       
@@ -8,20 +16,41 @@ const page = () => {
 <div>
       <div className='mt-6'>
         <label className='text-[#333333] text-[16px] font-inter' htmlFor='currentpass'>Current Password</label> <br />
-        <input className='w-[481px] mt-2 border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none font-inter text-[16px] placeholder-[#5C5C5C]' type='password' id='currentpass' placeholder='' />
+        <div className='relative'>
+         <input className=' w-[481px] mt-2 border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none font-inter text-[16px]   placeholder-[#5C5C5C]' type={showPass? 'text':'password'} id='newapass' placeholder='' />
+         <div onClick={()=>setShowPass(!showPass)} className='cursor-pointer'>
+          {showPass? <IoEyeOutline className='rotate- w-6 h-6 absolute top-1/2 right-0 -translate-y-1/2 mr-6'  />:
+        <FaRegEyeSlash className='rotate- w-6 h-6 absolute top-1/2 right-0 -translate-y-1/2 mr-6' />}
+         </div>
+        
+       </div>
       </div>
 
 
-      <div className='mt-6'>
+      <div className='mt-6 '>
         <label className='text-[#333333] text-[16px] font-inter' htmlFor='newapass'>New Password</label> <br />
-        <input className='w-[481px] mt-2 border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none font-inter text-[16px]  placeholder-[#5C5C5C]' type='password' id='newapass' placeholder='' />
+       <div className='relative'>
+         <input className=' w-[481px] mt-2 border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none font-inter text-[16px]   placeholder-[#5C5C5C]' type={showPass1? 'text':'password'} id='newapass' placeholder='' />
+         <div onClick={()=>setShowPass1(!showPass1)} className='cursor-pointer'>
+          {showPass1? <IoEyeOutline className='rotate- w-6 h-6 absolute top-1/2 right-0 -translate-y-1/2 mr-6'  />:
+        <FaRegEyeSlash className='rotate- w-6 h-6 absolute top-1/2 right-0 -translate-y-1/2 mr-6' />}
+         </div>
+        
+       </div>
       </div>
 
 
 
       <div className='mt-6'>
         <label className='text-[#333333] text-[16px] font-inter' htmlFor='confirmpass'>Confirm New Password</label> <br />
-        <input className='w-[481px] mt-2 border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none  font-inter text-[16px]  placeholder-[#5C5C5C]' type='password' id='confirmpass' placeholder='' />
+        <div className='relative'>
+         <input className=' w-[481px] mt-2 border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none font-inter text-[16px]   placeholder-[#5C5C5C]' type={showPass2? 'text':'password'} id='newapass' placeholder='' />
+         <div onClick={()=>setShowPass2(!showPass2)} className='cursor-pointer'>
+          {showPass2? <IoEyeOutline className='rotate- w-6 h-6 absolute top-1/2 right-0 -translate-y-1/2 mr-6'  />:
+        <FaRegEyeSlash className='rotate- w-6 h-6 absolute top-1/2 right-0 -translate-y-1/2 mr-6' />}
+         </div>
+        
+       </div>
       </div>
 
 
