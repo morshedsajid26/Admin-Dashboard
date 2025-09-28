@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import TextToolbar from '@/app/component/TextToolbar';
 
 
-const page = () => {
+const Page = () => {
         const pathname = usePathname();
         const pathParts = pathname.split("/").filter(Boolean);
         const headerText = pathParts.join(" & ");;
@@ -44,4 +44,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

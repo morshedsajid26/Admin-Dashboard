@@ -37,23 +37,25 @@ export default function AgentApprovalTable() {
   const startIdx = (page - 1) * PAGE_SIZE;
 
   
-  const currentRows = useMemo(() => {
-    return baseRows.slice(startIdx, startIdx + PAGE_SIZE);
-  }, [startIdx, totalItems]);
 
- 
-  const pageList = useMemo(() => {
-    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
-    const out = [];
-    const left = Math.max(2, page - 2);
-    const right = Math.min(totalPages - 1, page + 2);
-    out.push(1);
-    if (left > 2) out.push("…");
-    for (let i = left; i <= right; i++) out.push(i);
-    if (right < totalPages - 1) out.push("…");
-    out.push(totalPages);
-    return out;
-  }, [page, totalPages]);
+ const currentRows = useMemo(() => {
+  return baseRows.slice(startIdx, startIdx + PAGE_SIZE);
+}, [startIdx]); 
+
+
+const pageList = useMemo(() => {
+  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+  const out = [];
+  const left = Math.max(2, page - 2);
+  const right = Math.min(totalPages - 1, page + 2);
+  out.push(1);
+  if (left > 2) out.push("…");
+  for (let i = left; i <= right; i++) out.push(i);
+  if (right < totalPages - 1) out.push("…");
+  out.push(totalPages);
+  return out;
+}, [page, totalPages]); 
+
 
   const goPrev = () => setPage((p) => Math.max(1, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages, p + 1));

@@ -8,7 +8,7 @@ import profile from '@/public/profile.png'
 import { MdOutlineCameraAlt } from 'react-icons/md';
 
 
-const page = ({children}) => {
+const Page = ({children}) => {
       const pathname = usePathname(); 
   const pathParts = pathname.split("/").filter(Boolean)
   return (
@@ -41,4 +41,4 @@ const page = ({children}) => {
   )
 }
 
-export default page
+export default Page

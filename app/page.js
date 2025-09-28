@@ -10,7 +10,7 @@ import IncomeBar from './component/IncomeBar'
 import GrowthBar from './component/GrowthBar'
 import { IoIosArrowDown } from 'react-icons/io'
 
-const page = () => {
+const Page = () => {
   let [yearIncome,setYearIncome]=useState(false);
   let [yearGrowth,setYearGrowth]=useState(false);
   let [yearValue,setYearValue]=useState("2025");
@@ -264,4 +264,4 @@ function EyeIcon() {
   )
 }
 
-export default page
+export default Page

@@ -1,6 +1,7 @@
+"use client";
 import React from 'react'
 
-const page = () => {
+const Page = () => {
   return (
     <div className='w-[481px]  flex flex-col items-center mx-auto mt-[26px]'>
       
@@ -43,4 +44,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

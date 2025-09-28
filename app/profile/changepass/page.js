@@ -4,7 +4,7 @@ import { FaRegEyeSlash } from 'react-icons/fa'
 import { IoEyeOutline } from 'react-icons/io5'
 
 
-const page = () => {
+const Page = () => {
 
   let [showPass,setShowPass]=useState(false);
   let [showPass1,setShowPass1]=useState(false);
@@ -69,4 +69,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
