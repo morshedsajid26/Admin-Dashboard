@@ -21,7 +21,7 @@ const Page = ({children}) => {
 
         <div className=' w-[254px] flex flex-col items-center mx-auto'>
           <div className='image relative'>
-            <Image src={profile}/>
+            <Image src={profile} alt='profile'/>
            <div className='w-[30px] h-[30px] flex items-center justify-center bg-[#FEFEFE]   rounded-full absolute bottom-0 right-0'>
              <MdOutlineCameraAlt className='w-6 h-6 rounded-full py-[3.5px] px-[2.5px] bg-[#015093] text-white' />
            </div>

@@ -95,7 +95,7 @@ function EyeIcon() {
 
       <div className='bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px]'> 
         <p className='font-inter font-medium text-[20px] text-[#333333]'>Total Agents</p>
-        <Image src={agents} />
+        <Image src={agents} alt='agents' />
         <p className='font-inter font-semibold text-[24px] text-[#333333]'> 4,782</p>
       </div>
 
@@ -107,7 +107,7 @@ function EyeIcon() {
 
       <div className='bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px]'> 
         <p className='font-inter font-medium text-[20px] text-[#333333]'>Active listings</p>
-        <Image src={listings}  lt="Active Listings"/>
+        <Image src={listings}  alt="Active Listings"/>
         <p className='font-inter font-semibold text-[24px] text-[#333333]'> 358</p>
       </div>
 
@@ -227,7 +227,7 @@ function EyeIcon() {
                 </td>
                 <td className="py-4 pr-4">
                   <div className="flex items-center gap-3">
-                    <img
+                    <Image
                       src={avatar}
                       alt={r.name}
                       className="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow"
