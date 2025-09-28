@@ -142,7 +142,7 @@ export default function AgentApprovalTable() {
               <button
                 key={p}
                 onClick={() => setPage(p)}
-                className={`w-[22px] h-[22px] rounded-full font-inter text-[16px] flex items-center justify-center  ${
+                className={`w-[30px] h-[30px] rounded-full font-inter text-[16px] flex items-center justify-center  ${
                   p === page ? "bg-[#015093] text-white ring-[#015093]" : "text-[#333333] hover:bg-slate-50"
                 }`}
               >
