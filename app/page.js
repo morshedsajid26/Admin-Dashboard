@@ -31,7 +31,7 @@ const baseRows = [
   { sl: "#1233", name: "Ronald Richards",avatar: "user3.png",  date: "08/02/19", status: "pending"  },
   { sl: "#1234", name: "Dianne Russell", avatar: "user4.png",  date: "08/03/14", status: "pending"  },
   { sl: "#1235", name: "Albert Flores",  avatar: "user5.png",  date: "02/11/12", status: "pending"  },
-,
+
 ];
 
 function Badge({ children, color }) {
@@ -118,7 +118,7 @@ function EyeIcon() {
           
           <div className='relative cursor-pointer'>
             <div onClick={()=>setYearIncome(!yearIncome)} className='  '>
-            <input className='outline-none w-[75px] border border-[#767676] py-[6px] pl-2.5 pr-1 rounded-[5px] font-inter text-[14px] text-[#333333] placeholder-[#333333]' placeholder={yearValue}/>
+            <input readOnly className='outline-none w-[75px] border border-[#767676] py-[6px] pl-2.5 pr-1 rounded-[5px] font-inter text-[14px] text-[#333333] placeholder-[#333333]' placeholder={yearValue}/>
 
             {yearIncome? <IoIosArrowDown className='absolute top-1/2 right-0 -translate-y-1/2 w-6 h-6 rotate-180' />:<IoIosArrowDown className='absolute top-1/2 right-0 -translate-y-1/2 w-6 h-6 ' />
                }
@@ -160,7 +160,7 @@ function EyeIcon() {
           
           <div className='relative cursor-pointer'>
             <div onClick={()=>setYearGrowth(!yearGrowth)} className='  '>
-            <input className='outline-none w-[75px] border border-[#767676] py-[6px] pl-2.5 pr-1 rounded-[5px] font-inter text-[14px] text-[#333333] placeholder-[#333333]' placeholder={yearValue}/>
+            <input readOnly className='outline-none w-[75px] border border-[#767676] py-[6px] pl-2.5 pr-1 rounded-[5px] font-inter text-[14px] text-[#333333] placeholder-[#333333]' placeholder={yearValue}/>
 
             {yearIncome? <IoIosArrowDown className='absolute top-1/2 right-0 -translate-y-1/2 w-6 h-6 rotate-180' />:<IoIosArrowDown className='absolute top-1/2 right-0 -translate-y-1/2 w-6 h-6 ' />
                }
@@ -221,7 +221,7 @@ function EyeIcon() {
             
             const avatar = r.avatar.startsWith("/") ? r.avatar : `/${r.avatar}`;
             return (
-              <tr  className="align-middle">
+              <tr key={r.sl}  className="align-middle">
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] w-[200px] whitespace-nowrap">
                   {r.sl}
                 </td>
@@ -230,6 +230,8 @@ function EyeIcon() {
                     <Image
                       src={avatar}
                       alt={r.name}
+                      width={36}
+                      height={36}
                       className="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow"
                     />
                     <span className="text-[#333333] font-inter text-[16px]">{r.name}</span>

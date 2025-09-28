@@ -84,7 +84,7 @@ export default function AgentApprovalTable() {
   
   const currentRows = useMemo(() => {
     return baseRows.slice(startIdx, startIdx + PAGE_SIZE);
-  }, [startIdx, totalItems]);
+  }, [startIdx]);
 
  
   const pageList = useMemo(() => {

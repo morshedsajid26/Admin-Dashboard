@@ -43,7 +43,7 @@ export default function NotificationsPage() {
       ...n,
       id: startIdx + i, 
     }));
-  }, [startIdx, totalItems]);
+  }, [startIdx]);
 
   
   const pageList = useMemo(() => {
