@@ -2,30 +2,40 @@
 import React, { useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Header from "../../component/Header";
-import {  FaArrowTurnUp } from "react-icons/fa6";
+import { FaArrowTurnUp } from "react-icons/fa6";
+
 
 const baseRows = [
- { sl: "#1231",   date: "10/28/12", status: "pending" , message:"I Didn't Receive My Referral...",  email:"bockely@att.com", mobile:"(907) 555-0101",   },
-  { sl: "#1232",   date: "01/05/12", status: "replied" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",   },
-  { sl: "#1233",   date: "08/02/19", status: "pending" , message:"I Didn't Receive My Referral...",  email:"bockely@att.com", mobile:"(907) 555-0101", status: "pending" , message:"I Didn't Receive My Referral...",  email:"bockely@att.com", mobile:"(907) 555-0101",   },
-  { sl: "#1235",  date: "02/11/12", status: "replied" , message:"I Didn't Receive My Referral...",  email:"bockely@att.com", mobile:"(907) 555-0101",   },
-  { sl: "#1236",   date: "10/06/13", status: "pending" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",    },
-  { sl: "#1237",   date: "05/03/14", status: "replied" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",   },
-  { sl: "#1238",   date: "07/18/17", status: "pending" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",    },
-  { sl: "#1239",   date: "04/04/18", status: "replied" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",     },
-  { sl: "#1240",  date: "08/21/15",  status: "pending" , message:"I Didn't Receive My Referral...", email:"bockely@att.com", mobile:"(907) 555-0101",    },
+  { sl: "#1231", date: "10/28/12", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1232", date: "01/05/12", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1233", date: "08/02/19", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1235", date: "02/11/12", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1236", date: "10/06/13", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1237", date: "05/03/14", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1238", date: "07/18/17", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1239", date: "04/04/18", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1240", date: "08/21/15", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+   { sl: "#1231", date: "10/28/12", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1232", date: "01/05/12", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1233", date: "08/02/19", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1235", date: "02/11/12", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1236", date: "10/06/13", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1237", date: "05/03/14", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1238", date: "07/18/17", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1239", date: "04/04/18", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
+  { sl: "#1240", date: "08/21/15", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
 ];
 
 
-const TOTAL_PAGES = 100;
-const PAGE_SIZE = 10; 
-const TOTAL_ITEMS = TOTAL_PAGES * PAGE_SIZE;
+const PAGE_SIZE = 10;
 
 function Badge({ children, color }) {
-  const cls =
-    color === "blue"
-      ? "text-[#49A0E6]  ring-1 ring-[#0DBF69]/20"
-      : "text-[#FFC42D] ring-1 ring-[#DC4600]/20 ";
+  const palette = {
+    red:  "text-[#DC2626] ring-1 ring-[#DC2626]/20",
+    blue: "text-[#49A0E6] ring-1 ring-[#49A0E6]/20",
+    yellow: "text-[#FFC42D] ring-1 ring-[#FFC42D]/20",
+  };
+  const cls = palette[color] || palette.yellow;
   return (
     <span className={`inline-flex items-center rounded-full px-6 py-[9px] text-[16px] font-inter ${cls}`}>
       {children}
@@ -33,16 +43,10 @@ function Badge({ children, color }) {
   );
 }
 
-
-
 function ActionCell({ status }) {
   if (status === "pending") return <Badge color="red">Pending</Badge>;
   if (status === "replied") return <Badge color="blue">Replied</Badge>;
-  return (
-    <div>
-
-    </div>
-  );
+  return <Badge color="yellow">{status}</Badge>;
 }
 
 function EyeIcon() {
@@ -53,49 +57,43 @@ function EyeIcon() {
     </svg>
   );
 }
+
 function TurnIcon() {
-  return (
-   <FaArrowTurnUp className="text-white rotate-270 w-6 h-6" />
-  );
+  return <FaArrowTurnUp className="text-white rotate-[270deg] w-6 h-6" />; 
 }
 
 export default function AgentApprovalTable() {
   const [page, setPage] = useState(1);
 
-  const startIdx = (page - 1) * PAGE_SIZE;              
-  const endIdx = Math.min(startIdx + PAGE_SIZE, TOTAL_ITEMS); 
+  const totalItems = baseRows.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const startIdx = (page - 1) * PAGE_SIZE;
+
 
   const currentRows = useMemo(() => {
-    const out = [];
-    for (let i = 0; i < PAGE_SIZE; i++) {
-      const source = baseRows[i % baseRows.length];
-      out.push(source);
-    }
-    return out;
-  }, [page]);
+    return baseRows.slice(startIdx, startIdx + PAGE_SIZE);
+  }, [startIdx, totalItems]);
 
-  
   const pageList = useMemo(() => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
     const out = [];
-    const push = (v) => out.push(v);
     const left = Math.max(2, page - 2);
-    const right = Math.min(TOTAL_PAGES - 1, page + 2);
-    push(1);
-    if (left > 2) push("…");
-    for (let i = left; i <= right; i++) push(i);
-    if (right < TOTAL_PAGES - 1) push("…");
-    push(TOTAL_PAGES);
+    const right = Math.min(totalPages - 1, page + 2);
+    out.push(1);
+    if (left > 2) out.push("…");
+    for (let i = left; i <= right; i++) out.push(i);
+    if (right < totalPages - 1) out.push("…");
+    out.push(totalPages);
     return out;
-  }, [page]);
-
+  }, [page, totalPages]);
 
   const goPrev = () => setPage((p) => Math.max(1, p - 1));
-  const goNext = () => setPage((p) => Math.min(TOTAL_PAGES, p + 1));
-
+  const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
 
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
-        <Header/>
+      <Header />
+
       <table className="min-w-[720px] w-full text-left table-fixed mt-[18px]">
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
@@ -110,81 +108,77 @@ export default function AgentApprovalTable() {
         </thead>
 
         <tbody className="bg-white">
-          {currentRows.map((r, i) => {
-            
-           
-            
-           
-            return (
-              <tr  className="align-middle">
-                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] w-[200px] whitespace-nowrap">
-                  {r.sl}
-                </td>
-                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>
-                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.email}</td>
-                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.mobile}</td>
-                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.message}</td>
-                
-                <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
-                <td className="py-4 pr-2 flex gap-3">
+          {currentRows.map((r) => (
+            <tr key={r.sl} className="align-middle">
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] w-[200px] whitespace-nowrap">
+                {r.sl}
+              </td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.email}</td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.mobile}</td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.message}</td>
+              <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
+              <td className="py-4 pr-2">
+                <div className="flex gap-3">
                   <button
                     type="button"
-                    aria-label={`View details of ${r.name}`}
+                    aria-label={`View details of ${r.sl}`}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#FFC42D] hover:opacity-90 transition"
                   >
                     <EyeIcon />
                   </button>
                   <button
                     type="button"
-                    
+                    aria-label={`Turn action for ${r.sl}`}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#015093] hover:opacity-90 transition"
                   >
                     <TurnIcon />
                   </button>
-                </td>
-              </tr>
-            );
-          })}
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
-      
-      <div className="mt-6  flex justify-center">
-        
-
+     
+      <div className="mt-6 flex justify-center">
         <nav className="inline-flex items-center gap-4" aria-label="Pagination">
-          
-          <button onClick={goPrev}  disabled={page === 1} className="text-[#333333] cursor-pointer flex items-center gap-4 font-inter text-[16px]">
-            <IoIosArrowBack /> 
+          <button
+            onClick={goPrev}
+            disabled={page === 1}
+            className="text-[#333333] flex items-center gap-4 font-inter text-[16px] disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <IoIosArrowBack />
             Previous
-            
-            </button>
+          </button>
 
           {pageList.map((p, i) =>
             p === "…" ? (
               <span key={`dots-${i}`} className="px-2 text-slate-500">…</span>
             ) : (
               <button
-                key={p}
-                onClick={() => setPage(p)}
-                className={`w-[30px] h-[30px] rounded-full font-inter text-[16px] flex items-center justify-center  ${
-                  p === page ? "bg-[#015093] text-white ring-[#015093]" : "text-[#333333] hover:bg-slate-50"
+                key={`page-${p}`}
+                onClick={() => setPage(Number(p))}
+                className={`w-[30px] h-[30px] rounded-full font-inter text-[16px] flex items-center justify-center ${
+                  p === page ? "bg-[#015093] text-white" : "text-[#333333] hover:bg-slate-50"
                 }`}
+                aria-current={p === page ? "page" : undefined}
               >
                 {p}
               </button>
             )
           )}
 
-          <button onClick={goNext} disabled={page === TOTAL_PAGES} className="text-[#333333] cursor-pointer flex items-center gap-4 font-inter text-[16px]">
+          <button
+            onClick={goNext}
+            disabled={page === totalPages}
+            className="text-[#333333] flex items-center gap-4 font-inter text-[16px] disabled:opacity-40 disabled:cursor-not-allowed"
+          >
             Next
             <IoIosArrowForward />
-            
-            </button>
-          
+          </button>
         </nav>
-
-        
       </div>
     </div>
   );
