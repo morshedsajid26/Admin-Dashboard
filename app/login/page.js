@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   const router = useRouter();
   const sp = useSearchParams();
-  const callbackUrl = sp.get("redirect") || "/"; // লগইনের পর যেখানে যাবে
+  const callbackUrl = sp.get("redirect") || "/"; 
 
   const onSubmit = async (e) => {
     e.preventDefault();

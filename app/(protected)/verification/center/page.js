@@ -164,7 +164,7 @@ export default function AgentApprovalTable() {
         </tbody>
       </table>
 
-      {/* Pagination */}
+      
       <div className="mt-6 flex justify-center">
         <nav className="inline-flex items-center gap-4" aria-label="Pagination">
           <button
