@@ -1,8 +1,9 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import Header from "../../component/Header";
+
 import Image from "next/image";
+import Header from "@/app/component/Header";
 
 
 const baseRows = [

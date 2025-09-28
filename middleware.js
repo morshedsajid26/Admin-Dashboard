@@ -35,9 +35,15 @@ export function middleware(req) {
     pathname === "/" ||
     pathname.startsWith("/user") ||
     pathname.startsWith("/agent") ||
-    pathname.startsWith("/settings") ||
-    pathname.startsWith("/helps") ||
-    pathname.startsWith("/listings");
+    pathname.startsWith("/listings") ||
+    pathname.startsWith("/help") ||
+    pathname.startsWith("/reports") || 
+    pathname.startsWith("/profile") ||
+    pathname.startsWith("/verification") ||
+    pathname.startsWith("/notifications") ||
+    pathname.startsWith("/about") ||
+    pathname.startsWith("/terms") ||
+    pathname.startsWith("/privacy") ;
 
   if (!isProtected) return NextResponse.next();
 
@@ -57,5 +63,5 @@ export function middleware(req) {
 
 export const config = {
   
-  matcher: ["/", "/user/:path*", "/agent/:path*", "/listings/:path*"],
+  matcher: ["/", "/user/:path*", "/agent/:path*", "/listings/:path*", "/help/:path*", "/reports/:path*", "/profile/:path*", "/verification/:path*", "/notifications/:path*", "/about/:path*" , "/terms/:path*", "/privacy/:path*"],
 };

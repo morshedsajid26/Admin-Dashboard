@@ -71,12 +71,12 @@ export default function LoginPage() {
           <input type="checkbox" className="ml-2 accent-[#015093]" />
             <p>Remember Password</p>
           </div>
-          <a href="#" className="text-[#333333] hover:text-[#015093] font-inter text-[16px] hover:underline">Forgot Password?</a>
+          <a href="/forgotpassword" className="text-[#333333] hover:text-[#015093] font-inter text-[16px] hover:underline">Forgot Password?</a>
         </div>
 
         <button
           disabled={loading}
-          className="w-full bg-[#015093] text-white rounded py-2 hover:opacity-90 disabled:opacity-50 cursor-pointer"
+           className="w-full font-poppins text-[16px] bg-[#015093] text-[#FEFEFE] rounded py-3 hover:opacity-90 disabled:opacity-50 cursor-pointer"
         >
           {loading ? "Signing in..." : "Sign In"}
         </button>
