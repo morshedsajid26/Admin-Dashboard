@@ -16,7 +16,7 @@ const Topbar = () => {
 
 
         <div className="user flex items-center gap-3">
-            <Image src={user}/>
+            <Image src={user} alt='user'/>
             <p className='font-inter font-medium text-[#333333] text-[16px]'>Robert Smith</p>
         </div>
       </div>

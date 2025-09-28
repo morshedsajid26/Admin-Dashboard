@@ -1,7 +1,7 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import Header from "../component/Header";
+import Header from "@/app/component/Header";
 import { MdOutlineEdit } from "react-icons/md";
 import Image from "next/image";
 

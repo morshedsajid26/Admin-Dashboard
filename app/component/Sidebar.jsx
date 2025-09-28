@@ -8,6 +8,7 @@ import { FaListUl, FaRegUserCircle } from "react-icons/fa";
 import { MdOutlineHelpCenter } from "react-icons/md";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { IoIosArrowDown } from 'react-icons/io';
+import { signOut } from 'next-auth/react';
 
 
 
@@ -127,7 +128,7 @@ const Sidebar = ({className}) => {
             
         </ul>
 
-        <button className=' font-inter font-medium text-[16px] text-[#333333] hover:text-[#FEFEFE] hover:bg-[#015093] py-3 transition-all duration-300 cursor-pointer pl-[34px] rounded-r-[5px] flex items-center gap-2.5 w-full '>
+        <button onClick={() => signOut({ callbackUrl: "/login" })} className=' font-inter font-medium text-[16px] text-[#333333] hover:text-[#FEFEFE] hover:bg-[#015093] py-3 transition-all duration-300 cursor-pointer pl-[34px] rounded-r-[5px] flex items-center gap-2.5 w-full '>
             <MdLogout className='w-6 h-6' />
             Log out
         </button>
