@@ -6,8 +6,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import profile from '@/public/profile.png'
 import { MdOutlineCameraAlt } from 'react-icons/md';
+import Link from 'next/link';
 
-
+const tabs = [
+  { href: "/profile", label: "Edit Profile" },
+  { href: "/profile/changepass", label: "Change Password" },
+];
 const Page = ({children}) => {
       const pathname = usePathname(); 
   const pathParts = pathname.split("/").filter(Boolean)
@@ -30,8 +34,22 @@ const Page = ({children}) => {
           <p className=' text-[30px] font-medium font-inter text-[#333333] mt-4 mb-6'>Mr. Admin</p>
 
           <div className='flex justify-between gap-[30px]'>
-            <a  className=' text-[16px] font-medium font-inter text-[#333333]  hover:text-[#015093] underline ' href='/profile'>Edit Profile</a>
-            <a  className=' text-[16px] font-medium font-inter text-[#333333] hover:text-[#015093] underline  ' href='/profile/changepass'>Change Password</a>
+             {tabs.map((t) => {
+        const isActive = pathname === t.href ;
+        return (
+          <Link
+            key={t.href}
+            href={t.href}
+            className={
+              isActive
+                ? "pb-[2px] text-[#015093] border-b-2 border-[#015093] font-semibold font-inter text-[16px]"
+                : "pb-[2px] text-[#333333]  font-inter text-[16px]"
+            }
+          >
+            {t.label}
+          </Link>
+        );
+      })}
           </div>
         </div>
       
