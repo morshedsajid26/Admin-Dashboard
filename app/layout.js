@@ -16,18 +16,22 @@ const geistMono = Geist_Mono({
 
 const inter = Inter({ 
   variable: "--font-inter", 
-  subsets: ["latin"] });
+  subsets: ["latin"] ,
+  display: "swap",
+});
 
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["900", "800", "700", "600", "500"],
+  display: "swap",
 });
 
 const noto = Noto_Serif({
   variable: "--font-noto",
   subsets: ["latin"],
   weight: ["400", "700"],
+  display: "swap",
 });
 
 export const metadata = {
@@ -37,7 +41,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" >
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${poppins.variable} ${noto.variable} antialiased`}
       >

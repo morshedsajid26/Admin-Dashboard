@@ -26,7 +26,7 @@ const Sidebar = ({className}) => {
         <ul className='sidebar flex h-[680px] flex-col gap-3'>
             <Li icon={<LuLayoutDashboard className='w-6 h-6'/>}
             liText='Dashboard'
-            href='/'/>
+            href='/dashboard'/>
 
             <Li icon={<FaRegUserCircle className='w-6 h-6'/>}
             liText='User Management'
@@ -128,7 +128,7 @@ const Sidebar = ({className}) => {
             
         </ul>
 
-        <button onClick={() => signOut({ callbackUrl: "/login" })} className=' font-inter font-medium text-[16px] text-[#333333] hover:text-[#FEFEFE] hover:bg-[#015093] py-3 transition-all duration-300 cursor-pointer pl-[34px] rounded-r-[5px] flex items-center gap-2.5 w-full '>
+        <button onClick={() => signOut({ callbackUrl: "/" })} className=' font-inter font-medium text-[16px] text-[#333333] hover:text-[#FEFEFE] hover:bg-[#015093] py-3 transition-all duration-300 cursor-pointer pl-[34px] rounded-r-[5px] flex items-center gap-2.5 w-full '>
             <MdLogout className='w-6 h-6' />
             Log out
         </button>

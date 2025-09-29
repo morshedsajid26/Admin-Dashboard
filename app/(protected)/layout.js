@@ -1,17 +1,44 @@
-
+import { Geist, Geist_Mono, Inter, Poppins,Noto_Serif } from "next/font/google";
+import "../globals.css";
 import Topbar from "../component/Topbar";
 import Sidebar from "../component/Sidebar";
 
 
 
+const geistSans = Geist({ 
+  variable: "--font-geist-sans", 
+  subsets: ["latin"] });
+  
+const geistMono = Geist_Mono({ 
+  variable: "--font-geist-mono", 
+  subsets: ["latin"] });
 
+const inter = Inter({ 
+  variable: "--font-inter", 
+  subsets: ["latin"] ,
+  display: "swap",
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["900", "800", "700", "600", "500"],
+  display: "swap",
+});
+
+const noto = Noto_Serif({
+  variable: "--font-noto",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+});
 
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" >
       <body
-        
+       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${poppins.variable} ${noto.variable} antialiased`}
       >
        
         <div className="flex h-screen overflow-hidden">

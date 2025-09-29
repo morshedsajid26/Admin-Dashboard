@@ -9,10 +9,10 @@ import users from "@/public/users.png";
 import agents from "@/public/agents.png";
 import income from "@/public/income.png";
 import listings from "@/public/listings.png";
-import IncomeBar from "../component/IncomeBar";
-import GrowthBar from "../component/GrowthBar";
+import IncomeBar from "../../component/IncomeBar";
+import GrowthBar from "../../component/GrowthBar";
 import { IoIosArrowDown } from "react-icons/io";
-import Container from "../component/Container";
+import Container from "../../component/Container";
 
 const Page = () => {
   // -------- AUTH GUARD (client fallback) ----------
