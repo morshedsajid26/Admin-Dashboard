@@ -34,10 +34,10 @@ const Sidebar = ({className}) => {
             />
 
 
-            <Li icon={<MdDashboard className='w-6 h-6'/>}
+            {/* <Li icon={<MdDashboard className='w-6 h-6'/>}
             liText='Agent Management'
             href='/agent/management'
-            />
+            /> */}
 
 
             <Li icon={<FaListUl className='w-6 h-6'/>}
@@ -49,10 +49,7 @@ const Sidebar = ({className}) => {
             
 
             <li        
-           onClick={() => { 
-              setHelp(!help); 
-              
-            }}
+           
             className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 pb-[2px]  transition-all duration-300 cursor-pointer rounded-r-[5px]'
             
             >
@@ -60,7 +57,10 @@ const Sidebar = ({className}) => {
                  <MdOutlineHelpCenter className='w-6 h-6 '/>
                 Help & Reports
               </div>
-             <IoIosArrowDown 
+             <IoIosArrowDown onClick={() => { 
+              setHelp(!help); 
+              
+            }}
                
   className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${help ? "rotate-180 top-6" : "top-1/2"}`} />
 
@@ -86,11 +86,7 @@ const Sidebar = ({className}) => {
 
 
             <li        
-           onClick={() => { 
-              
-              setSettings(!settings); 
-              
-            }} 
+          
             className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 pb-[2px]   transition-all duration-300 cursor-pointer rounded-r-[5px]'
             
             
@@ -100,7 +96,10 @@ const Sidebar = ({className}) => {
                  <MdOutlineSettings className='w-6 h-6 '/>
                 Settings
               </div>
-             <IoIosArrowDown   className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${settings ? "rotate-180 top-6" : "top-1/2"}`} />
+             <IoIosArrowDown   onClick={() => {               
+              setSettings(!settings);               
+            }} 
+             className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${settings ? "rotate-180 top-6" : "top-1/2"}`} />
 
                              
               <ul className={`submenu mt-3  ${settings?"opacity-100 h-auto visible  ":"opacity-0 h-0 invisible "}`} >

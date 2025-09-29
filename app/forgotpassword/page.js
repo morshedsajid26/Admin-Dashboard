@@ -7,7 +7,7 @@ export default function ForgotPasswordPage() {
  
 
   return (
-    <main className="min-h-screen grid place-items-center bg-[#CCDCE9]">
+    <main className="min-h-screen grid place-items-center drop-shadow-[#015093] bg-[#CCDCE9]">
       <form  className="bg-white rounded-xl py-[242px] px-[90px] w-full max-w-[630px] shadow">
        <div className="text-center">
          <h1 className="text-[32px] text-[#333333] font-inter font-medium">Forget Password?</h1>

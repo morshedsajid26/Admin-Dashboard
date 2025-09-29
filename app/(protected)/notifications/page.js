@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward, IoMdArrowBack } from "react-icons/io";
 import { usePathname } from "next/navigation";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { useRouter } from 'next/navigation';
 
 
 const NOTIFICATIONS = [
@@ -29,6 +30,7 @@ const PAGE_SIZE = 10;
 export default function NotificationsPage() {
   const pathname = usePathname();
   const pathParts = (pathname || "/").split("/").filter(Boolean);
+  const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -62,17 +64,13 @@ export default function NotificationsPage() {
   const goPrev = () => setCurrentPage((p) => Math.max(1, p - 1));
   const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
-  // optional: delete handler (demo)
-  const handleDelete = (id) => {
-    // এখানে API কল/state আপডেট লাগলে করবে; demo-তে শুধু alert
-    
-  };
+ 
 
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
       
       <div className="flex items-center gap-[14px]">
-        <IoMdArrowBack className="w-6 h-6 text-[#015093]" />
+        <IoMdArrowBack onClick={() => router.back()} className="w-6 h-6 text-[#015093]" />
         <h3 className="text-[#333333] text-[20px] font-inter font-semibold capitalize">
           {pathParts[0] || ""}
         </h3>
