@@ -69,7 +69,7 @@ export default function LoginPage() {
         <div className="flex items-center justify-between mb-10">
           <div className="flex gap-2.5">
           <input type="checkbox" className="ml-2 accent-[#015093]" />
-            <p>Remember Password</p>
+            <p className="text-[#333333] font-inter text-[16px] " >Remember Password</p>
           </div>
           <a href="/forgotpassword" className="text-[#333333] hover:text-[#015093] font-inter text-[16px] hover:underline">Forgot Password?</a>
         </div>
