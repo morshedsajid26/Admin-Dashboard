@@ -11,7 +11,7 @@ const page = () => {
   return (
     <div>
       <main className="min-h-screen grid place-items-center bg-[#CCDCE9]">
-            <form  className="bg-white rounded-xl py-[120px] px-[90px] w-full max-w-[630px] shadow">
+            <form  className="bg-white rounded-[25px] pt-[155px] pb-[205px] px-[75px] w-full max-w-[630px] shadow">
              <div className="text-center">
                <h1 className="text-[32px] text-[#333333] font-inter font-medium">Login to Account</h1>
               <p className="font-inter text-[18px] text-[#333333] mt-6">Please enter your email and password to continue</p>

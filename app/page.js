@@ -27,7 +27,7 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen grid place-items-center bg-[#CCDCE9]">
-      <form onSubmit={onSubmit} className="bg-white rounded-xl py-[120px] px-[90px] w-full max-w-[630px] shadow">
+      <form onSubmit={onSubmit} className="bg-white   rounded-[25px] py-[120px] px-[75px] w-full max-w-[630px] ">
        <div className="text-center">
          <h1 className="text-[32px] text-[#333333] font-inter font-medium">Login to Account</h1>
         <p className="font-inter text-[18px] text-[#333333] mt-6">Please enter your email and password to continue</p>

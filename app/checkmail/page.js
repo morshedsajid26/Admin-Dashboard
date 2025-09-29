@@ -21,7 +21,7 @@ const page = () => {
   };
   return (
      <main className="min-h-screen grid place-items-center drop-shadow-[#015093] bg-[#CCDCE9]">
-      <form  className="bg-white rounded-xl pt-[186px] pb-[135px] px-[75px] w-full max-w-[630px] shadow text-center">
+      <form  className="bg-white rounded-[25px] pt-[186px] pb-[135px] px-[75px] w-full max-w-[630px] shadow-[0_0_70px_rgba(0,74,173,0.54)] text-center">
        
          <h1 className="text-[32px] text-[#333333] font-inter font-medium">Check your email</h1>
         <p className="font-inter text-[16px] text-[#333333] mt-6">We sent a code to your email address @. Please check your email for the 5 digit code.</p>
