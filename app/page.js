@@ -36,7 +36,7 @@ export default function LoginPage() {
         <div className="mt-[68px] mb-[51px]">
           <label className="block mb-2 font-inter text-[16px]">Email address</label>
         <input
-          className="w-full border border-[#015093] outline-none rounded px-3 py-2 placeholder-[#5C5C5C]"
+          className="w-full font-inter text-[16px] text-[#333333] border border-[#015093] outline-none rounded px-3 py-2 placeholder-[#5C5C5C]"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           type="email"
@@ -49,7 +49,7 @@ export default function LoginPage() {
 
         <div className='relative '>
          <input
-          className="w-full border border-[#015093] outline-none rounded px-3 py-2 "
+          className="w-full font-inter text-[16px] text-[#333333] border border-[#015093] outline-none rounded px-3 py-2 "
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           type={showPass? 'text':'password'}

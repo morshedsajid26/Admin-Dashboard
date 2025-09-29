@@ -9,20 +9,20 @@ const Page = () => {
 <div>
       <div className='mt-6'>
         <label className='text-[#333333] text-[16px] font-inter' htmlFor='name'>User Name</label> <br />
-        <input className='w-[481px] mt-2 border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none placeholder-[#5C5C5C]' type='text' id='name' placeholder='Enter your name' />
+        <input className='w-[481px] mt-2 text-[#5C5C5C] border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none placeholder-[#5C5C5C] font-inter text-[16px]' type='text' id='name' placeholder='Enter your name' />
       </div>
 
 
       <div className='mt-6'>
         <label className='text-[#333333] text-[16px] font-inter' htmlFor='name'>Email</label> <br />
-        <input className='w-[481px] mt-2 border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none font-inter text-[16px]  placeholder-[#5C5C5C]' type='text' id='name' placeholder='Enter your email' />
+        <input className='w-[481px] mt-2 text-[#5C5C5C] border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none font-inter text-[16px]  placeholder-[#5C5C5C]' type='text' id='name' placeholder='Enter your email' />
       </div>
 
 
 
       <div className='mt-6'>
         <label className='text-[#333333] text-[16px] font-inter' htmlFor='name'>Contact no</label> <br />
-        <input className='w-[481px] mt-2 border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none font-inter text-[16px]  placeholder-[#5C5C5C]' type='text' id='name' placeholder='Enter your contact no' />
+        <input className='w-[481px] mt-2 text-[#5C5C5C] border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none font-inter text-[16px]  placeholder-[#5C5C5C]' type='text' id='name' placeholder='Enter your contact no' />
       </div>
 
 

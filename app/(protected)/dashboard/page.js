@@ -15,8 +15,8 @@ import { IoIosArrowDown } from "react-icons/io";
 import Container from "../../component/Container";
 
 const Page = () => {
-  // -------- AUTH GUARD (client fallback) ----------
-  const { status } = useSession(); // "loading" | "authenticated" | "unauthenticated"
+  
+  const { status } = useSession();  
   const router = useRouter();
   const sp = useSearchParams();
   const redirectTo = sp.get("redirect") || "/";
@@ -30,9 +30,8 @@ const Page = () => {
     }
   }, [status, router, redirectTo]);
 
-  if (status === "loading") return null;          // বা স্কেলেটন
-  if (status === "unauthenticated") return null;  // middleware রিডাইরেক্ট করলেই দেখাবে না
-
+  if (status === "loading") return null;          
+  if (status === "unauthenticated") return null;  
 
 
   const years = ["2025", "2024", "2023", "2022", "2021", "2020"];
@@ -96,34 +95,34 @@ const Page = () => {
 
   return (
     <div>
-      <Container className="grid grid-cols-4 grid-rows-2 gap-[18px]">
-        {/* Stat cards */}
-        <div className="bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px]">
+      <Container className="grid grid-cols-12 grid-rows-2 gap-[18px]">
+        
+        <div className="bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px] col-span-4 ">
           <p className="font-inter font-medium text-[20px] text-[#333333]">Total Users</p>
           <Image src={users} alt="Total Users" />
           <p className="font-inter font-semibold text-[24px] text-[#333333]"> 852,650</p>
         </div>
 
-        <div className="bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px]">
+        {/* <div className="bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px]">
           <p className="font-inter font-medium text-[20px] text-[#333333]">Total Agents</p>
           <Image src={agents} alt="Total Agents" />
           <p className="font-inter font-semibold text-[24px] text-[#333333]"> 4,782</p>
-        </div>
+        </div> */}
 
-        <div className="bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px]">
+        <div className="bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px] col-span-4 ">
           <p className="font-inter font-medium text-[20px] text-[#333333]">Total Income</p>
           <Image src={income} alt="Total Income" />
           <p className="font-inter font-semibold text-[24px] text-[#333333]"> $2,500</p>
         </div>
 
-        <div className="bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px]">
+        <div className="bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px] col-span-4 ">
           <p className="font-inter font-medium text-[20px] text-[#333333]">Active listings</p>
           <Image src={listings} alt="Active Listings" />
           <p className="font-inter font-semibold text-[24px] text-[#333333]"> 358</p>
         </div>
 
-        {/* Income Overview */}
-        <div className="col-span-2 bg-white rounded-[5px] py-[25px] px-5 ">
+       
+        <div className="col-span-6 bg-white rounded-[5px] py-[25px] px-5 ">
           <div className="mb-[30px] flex items-center justify-between">
             <h3 className="font-inter font-semibold text-[18px] text-[#333333]">Income Overview</h3>
 
@@ -169,8 +168,7 @@ const Page = () => {
           </div>
         </div>
 
-        {/* User Growth */}
-        <div className="col-span-2 bg-white rounded-[5px] py-[25px] px-5">
+        <div className="col-span-6 bg-white rounded-[5px] py-[25px] px-5">
           <div className="mb-[30px] flex items-center justify-between">
             <h3 className="font-inter font-semibold text-[18px] text-[#333333]">User Growth</h3>
 
@@ -216,8 +214,8 @@ const Page = () => {
           </div>
         </div>
 
-        {/* Verification center table */}
-        <div className="col-span-4 bg-white rounded-[5px] py-[25px] px-[22px]">
+       
+        <div className="col-span-12 bg-white rounded-[5px] py-[25px] px-[22px]">
           <div className="mb-[29px] flex items-center justify-between">
             <h3 className="text-[#333333] text-[20px] font-inter font-semibold capitalize">verification center</h3>
             <a className="text-[#015093] text-[14px] font-inter font-medium" href="/verification/center">

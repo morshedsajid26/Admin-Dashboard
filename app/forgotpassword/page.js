@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
 
 
@@ -17,7 +18,7 @@ export default function ForgotPasswordPage() {
         <div className="mt-[78px] mb-[48px]">
           <label className="block mb-2 font-inter text-[16px]">Email address</label>
         <input
-          className="w-full border border-[#015093] outline-none rounded px-3 py-3 placeholder-[#5C5C5C]"
+          className="w-full font-inter text-[16px] text-[#333333] border border-[#015093] outline-none rounded px-3 py-3 placeholder-[#5C5C5C]"
           
           type="email"
          
@@ -25,13 +26,14 @@ export default function ForgotPasswordPage() {
 
         </div>
 
-        
-
+        <Link href="/checkmail">
         <button   
           className="w-full font-poppins text-[16px] bg-[#015093] text-[#FEFEFE] rounded py-3 hover:opacity-90 disabled:opacity-50 cursor-pointer"
         >
           Continue
         </button>
+        </Link>
+
       </form>
     </main>
   );

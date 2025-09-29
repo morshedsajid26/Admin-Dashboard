@@ -53,17 +53,19 @@ const Sidebar = ({className}) => {
             className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 pb-[2px]  transition-all duration-300 cursor-pointer rounded-r-[5px]'
             
             >
-              <div className='flex items-center gap-2.5 pl-[31px] pr-[14px] '>
+             <div onClick={() => { 
+              setHelp(!help); 
+              
+            }}>
+               <div className='flex items-center gap-2.5 pl-[31px] pr-[14px] '>
                  <MdOutlineHelpCenter className='w-6 h-6 '/>
                 Help & Reports
               </div>
-             <IoIosArrowDown onClick={() => { 
-              setHelp(!help); 
-              
-            }}
+             <IoIosArrowDown 
                
-  className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${help ? "rotate-180 top-6" : "top-1/2"}`} />
+          className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${help ? "rotate-180 top-6" : "top-1/2"}`} />
 
+             </div>
                              
               <ul className={`submenu mt-3 
   
@@ -91,15 +93,17 @@ const Sidebar = ({className}) => {
             
             
             >
-              <div className='flex items-center gap-2.5
+              <div onClick={() => {               
+              setSettings(!settings);               
+            }} >
+                <div className='flex items-center gap-2.5
               pl-[31px] pr-[14px]'>
                  <MdOutlineSettings className='w-6 h-6 '/>
                 Settings
               </div>
-             <IoIosArrowDown   onClick={() => {               
-              setSettings(!settings);               
-            }} 
+             <IoIosArrowDown   
              className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${settings ? "rotate-180 top-6" : "top-1/2"}`} />
+              </div>
 
                              
               <ul className={`submenu mt-3  ${settings?"opacity-100 h-auto visible  ":"opacity-0 h-0 invisible "}`} >
