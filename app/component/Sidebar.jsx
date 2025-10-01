@@ -50,7 +50,7 @@ const Sidebar = ({className}) => {
 
             <li        
            
-            className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 pb-[2px]  transition-all duration-300 cursor-pointer rounded-r-[5px]'
+            className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 transition-all duration-300 cursor-pointer rounded-r-[5px] group'
             
             >
              <div onClick={() => { 
@@ -68,9 +68,7 @@ const Sidebar = ({className}) => {
              </div>
                              
               <ul className={`submenu mt-3 
-  
-                
-                
+              group-hover:bg-[#FEFEFE]
                  list-none ${help?"opacity-100 h-auto visible  ":"opacity-0 h-0 invisible "}`} >
                 <Li  liText='Help Center'
                 href='/help/center'
@@ -89,7 +87,7 @@ const Sidebar = ({className}) => {
 
             <li        
           
-            className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 pb-[2px]   transition-all duration-300 cursor-pointer rounded-r-[5px]'
+            className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 transition-all duration-300 cursor-pointer rounded-r-[5px] group'
             
             
             >
@@ -106,7 +104,7 @@ const Sidebar = ({className}) => {
               </div>
 
                              
-              <ul className={`submenu mt-3  ${settings?"opacity-100 h-auto visible  ":"opacity-0 h-0 invisible "}`} >
+              <ul className={`submenu mt-3 group-hover:bg-[#FEFEFE]  ${settings?"opacity-100 h-auto visible  ":"opacity-0 h-0 invisible "}`} >
               
                 <Li  liText='Profile'
                 href='/profile'

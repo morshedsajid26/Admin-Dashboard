@@ -116,7 +116,7 @@ const Page = () => {
         </div>
 
         <div className="bg-white rounded-[10px] flex flex-col justify-center items-center py-8 gap-[14px] col-span-4 ">
-          <p className="font-inter font-medium text-[20px] text-[#333333]">Active listings</p>
+          <p className="font-inter font-medium text-[20px] text-[#333333]">Active Listings</p>
           <Image src={listings} alt="Active Listings" />
           <p className="font-inter font-semibold text-[24px] text-[#333333]"> 358</p>
         </div>

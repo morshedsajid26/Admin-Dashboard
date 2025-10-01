@@ -29,10 +29,10 @@ const Li = ({
   `;
 
   const childStyle = `
-    block w-full pl-[31px] pr-[14px] py-3 text-[16px] rounded-r-[5px]
+    block w-full pl-[31px] pr-[14px] py-3 text-[16px] rounded-r-[5px] hover:text-[#FEFEFE] hover:bg-[#015093]
     ${isActiveChild
       ? "bg-[#015093] text-white hover:text-white"
-      : "text-[#0D0F12] hover:bg-white"}
+      : "text-[#0D0F12] "}
   `;
 
   return (
