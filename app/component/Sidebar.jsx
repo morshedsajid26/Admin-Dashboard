@@ -63,7 +63,7 @@ const Sidebar = ({className}) => {
               </div>
              <IoIosArrowDown 
                
-          className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${help ? "rotate-180 top-6" : "top-1/2"}`} />
+          className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${help ? "rotate-360 top-6" : "top-1/2 rotate-270"}`} />
 
              </div>
                              
@@ -100,7 +100,7 @@ const Sidebar = ({className}) => {
                 Settings
               </div>
              <IoIosArrowDown   
-             className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300 ${settings ? "rotate-180 top-6" : "top-1/2"}`} />
+             className={`absolute  right-0 -translate-y-1/2 w-6 h-6 transition-transform duration-300  ${settings ? "rotate-360 top-6" : "top-1/2 rotate-270"}`} />
               </div>
 
                              
