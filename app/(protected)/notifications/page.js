@@ -94,7 +94,7 @@ export default function NotificationsPage() {
               <p className="text-[#5C5C5C] text-[16px] font-inter whitespace-nowrap">{item.time}</p>
               <RiDeleteBin6Line
                 className="w-6 h-6 text-[#DC4600] cursor-pointer"
-                onClick={() => handleDelete(item.id)}
+                // onClick={() => handleDelete(item.id)}
                 title="Delete"
               />
             </div>
