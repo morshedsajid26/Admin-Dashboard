@@ -2,6 +2,8 @@
 import React from 'react'
 
 const Page = () => {
+
+  
   return (
     <div className='w-[481px]  flex flex-col items-center mx-auto mt-[26px]'>
       
@@ -9,7 +11,7 @@ const Page = () => {
 <div>
       <div className='mt-6'>
         <label className='text-[#333333] text-[16px] font-inter' htmlFor='name'>User Name</label> <br />
-        <input className='w-[481px] mt-2 text-[#5C5C5C] border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none placeholder-[#5C5C5C] font-inter text-[16px]' type='text' id='name' placeholder='Enter your name' />
+        <input  className='w-[481px] mt-2 text-[#5C5C5C] border border-[#015093] rounded-[5px] py-[13px] px-4 outline-none placeholder-[#5C5C5C] font-inter text-[16px]' type='text' id='name' placeholder='Enter your name' />
       </div>
 
 

@@ -15,7 +15,7 @@ export default function ResetSuccessPage() {
         <Link href="/" className="inline-block w-full mt-[60px]">
           <button className="w-full font-poppins text-[16px] bg-[#015093] text-[#FEFEFE] rounded py-3 hover:opacity-90 cursor-pointer">
             Go to Login
-          </button>
+          </button> 
         </Link>
       </div>
     </main>
