@@ -1,37 +1,17 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Header from "@/app/component/Header";
 import { FaArrowTurnUp } from "react-icons/fa6";
 
-
-const baseRows = [
-  { sl: "#1231", date: "10/28/12", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1232", date: "01/05/12", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1233", date: "08/02/19", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1235", date: "02/11/12", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1236", date: "10/06/13", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1237", date: "05/03/14", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1238", date: "07/18/17", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1239", date: "04/04/18", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1240", date: "08/21/15", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-   { sl: "#1231", date: "10/28/12", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1232", date: "01/05/12", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1233", date: "08/02/19", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1235", date: "02/11/12", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1236", date: "10/06/13", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1237", date: "05/03/14", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1238", date: "07/18/17", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1239", date: "04/04/18", status: "replied",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-  { sl: "#1240", date: "08/21/15", status: "pending",  message: "I Didn't Receive My Referral...", email: "bockely@att.com", mobile: "(907) 555-0101" },
-];
-
+// API URL
+// const API_URL = "https://ai-car-app-sandy.vercel.app/user/create-ticket"; // তোমার API রুট
 
 const PAGE_SIZE = 10;
 
 function Badge({ children, color }) {
   const palette = {
-    red:  "text-[#DC2626] ring-1 ring-[#DC2626]/20",
+    red: "text-[#DC2626] ring-1 ring-[#DC2626]/20",
     blue: "text-[#49A0E6] ring-1 ring-[#49A0E6]/20",
     yellow: "text-[#FFC42D] ring-1 ring-[#FFC42D]/20",
   };
@@ -59,44 +39,103 @@ function EyeIcon() {
 }
 
 function TurnIcon() {
-  return <FaArrowTurnUp className="text-white rotate-[270deg] w-6 h-6" />; 
+  return <FaArrowTurnUp className="text-white rotate-[270deg] w-6 h-6" />;
 }
 
 export default function AgentApprovalTable() {
   const [page, setPage] = useState(1);
+  const [rows, setRows] = useState([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
 
-  const totalItems = baseRows.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
-  const startIdx = (page - 1) * PAGE_SIZE;
 
+  const pageList = useMemo(() => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const out = [];
+    const left = Math.max(2, page - 2);
+    const right = Math.min(totalPages - 1, page + 2);
+    out.push(1);
+    if (left > 2) out.push("…");
+    for (let i = left; i <= right; i++) out.push(i);
+    if (right < totalPages - 1) out.push("…");
+    out.push(totalPages);
+    return out;
+  }, [page, totalPages]);
 
- const currentRows = useMemo(() => {
-  return baseRows.slice(startIdx, startIdx + PAGE_SIZE);
-}, [startIdx]); 
+  useEffect(() => {
+    let off = false;
 
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setErr("");  // Clear any previous errors
 
-const pageList = useMemo(() => {
-  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
-  const out = [];
-  const left = Math.max(2, page - 2);
-  const right = Math.min(totalPages - 1, page + 2);
-  out.push(1);
-  if (left > 2) out.push("…");
-  for (let i = left; i <= right; i++) out.push(i);
-  if (right < totalPages - 1) out.push("…");
-  out.push(totalPages);
-  return out;
-}, [page, totalPages]); 
+        const url = `${API_URL}?page=${page}&limit=${PAGE_SIZE}`;
 
+        const res = await fetch(url, {
+          method: "GET", // Make sure to use GET or the appropriate method based on your API
+          credentials: "include", // Optional, only if needed
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token") || ""}`, // If using a token for authentication
+          },
+        });
+
+        // If the response is not OK, throw an error
+        if (!res.ok) {
+          let msg = `HTTP ${res.status}`;
+          try {
+            const j = await res.json();
+            msg = j?.error || j?.message || msg;
+          } catch {}
+          throw new Error(msg);
+        }
+
+        const body = await res.json();
+        const list = Array.isArray(body) ? body : body.data || body.items || [];
+        const total = body.total || list.length;  // Adjust according to your API response
+
+        const mapped = list.map((u) => ({
+          sl: u.id || u._id || `#${String(u.id || u._id || "").slice(-4)}`,
+          date: u.createdAt ? new Date(u.createdAt).toLocaleDateString() : u.date,
+          status: u.status || "pending",
+          message: u.message || "No message",
+          email: u.email || "unknown@example.com",
+          mobile: u.phone || u.mobile || "-",
+        }));
+
+        if (!off) {
+          setRows(mapped);
+          setTotalItems(total);
+        }
+      } catch (e) {
+        if (!off) setErr(e.message || "Failed to load");
+      } finally {
+        if (!off) setLoading(false);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      off = true;
+    };
+  }, [page]);
 
   const goPrev = () => setPage((p) => Math.max(1, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
 
-
-
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
       <Header />
+
+      {/* Error/Loading State */}
+      <div className="mt-2 mb-2">
+        {loading && <p className="text-sm text-gray-500">Loading…</p>}
+        {err && <p className="text-sm text-red-600">{err}</p>}
+      </div>
 
       <table className="min-w-[720px] w-full text-left table-fixed mt-[18px]">
         <thead>
@@ -112,28 +151,28 @@ const pageList = useMemo(() => {
         </thead>
 
         <tbody className="bg-white">
-          {currentRows.map((r) => (
-            <tr key={r.sl} className="align-middle">
+          {rows.map((u) => (
+            <tr key={u.sl} className="align-middle">
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] w-[200px] whitespace-nowrap">
-                {r.sl}
+                {u.sl}
               </td>
-              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>
-              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.email}</td>
-              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.mobile}</td>
-              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.message}</td>
-              <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{u.date}</td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{u.email}</td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{u.mobile}</td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{u.message}</td>
+              <td className="py-4 pr-4"><ActionCell status={u.status} /></td>
               <td className="py-4 pr-2">
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    aria-label={`View details of ${r.sl}`}
+                    aria-label={`View details of ${u.sl}`}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#FFC42D] hover:opacity-90 transition"
                   >
                     <EyeIcon />
                   </button>
                   <button
                     type="button"
-                    aria-label={`Turn action for ${r.sl}`}
+                    aria-label={`Turn action for ${u.sl}`}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#015093] hover:opacity-90 transition"
                   >
                     <TurnIcon />
@@ -145,7 +184,7 @@ const pageList = useMemo(() => {
         </tbody>
       </table>
 
-     
+      {/* Pagination */}
       <div className="mt-6 flex justify-center">
         <nav className="inline-flex items-center gap-4" aria-label="Pagination">
           <button

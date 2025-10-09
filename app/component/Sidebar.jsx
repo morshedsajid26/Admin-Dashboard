@@ -8,7 +8,7 @@ import { FaListUl, FaRegUserCircle } from "react-icons/fa";
 import { MdOutlineHelpCenter } from "react-icons/md";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { IoIosArrowDown } from 'react-icons/io';
-import { signOut } from 'next-auth/react';
+// import { signOut } from 'next-auth/react';
 
 
 
@@ -136,6 +136,7 @@ const Sidebar = ({className}) => {
         </button>
       
     </div>
+    
   )
 }
 
