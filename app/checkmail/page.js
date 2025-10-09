@@ -73,7 +73,8 @@ const Page = () => {
         body: JSON.stringify({ otp, email }),  // Send both email and OTP
       });
 
-      const data = await res.json();  // Parse response to see if success or failure
+      const data = await res.json();
+      console.log(data)  // Parse response to see if success or failure
 
       // If API returns error
       if (!res.ok) {

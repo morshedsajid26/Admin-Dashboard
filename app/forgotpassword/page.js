@@ -37,7 +37,10 @@ export default function ForgotPasswordPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email }),
+
       });
+
+      localStorage.setItem("resetEmail", email);
 
       if (!response.ok) {
         const errorMessage = await response.text();
