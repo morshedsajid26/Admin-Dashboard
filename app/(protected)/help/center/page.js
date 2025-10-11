@@ -3,9 +3,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Header from "@/app/component/Header";
 import { FaArrowTurnUp } from "react-icons/fa6";
+import Cookies from "js-cookie";
 
-// API URL
-// const API_URL = "https://ai-car-app-sandy.vercel.app/user/create-ticket"; // তোমার API রুট
+
+const API_BASE = "https://ai-car-app-sandy.vercel.app";
+const LIST_URL = `${API_BASE}/admin/tickets`;
+
+const CREATE_TICKET_URL = `${API_BASE}/user/create-ticket`;
 
 const PAGE_SIZE = 10;
 
@@ -48,6 +52,7 @@ export default function AgentApprovalTable() {
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  const [userdata, setUserdata] = useState([]);
 
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
 
@@ -70,35 +75,54 @@ export default function AgentApprovalTable() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        setErr("");  // Clear any previous errors
+        setErr("");
 
-        const url = `${API_URL}?page=${page}&limit=${PAGE_SIZE}`;
+        
+        let raw = "";
+        try {
+          raw = Cookies.get("token") || (typeof window !== "undefined" && localStorage.getItem("token")) || "";
+          if (raw && raw.startsWith('"') && raw.endsWith('"')) {
+            raw = JSON.parse(raw);
+          }
+        } catch (e) {
+          console.warn("[auth] token read error", e);
+          raw = raw || "";
+        }
+        const token = raw && raw.toString().startsWith("Bearer ") ? raw.toString().slice(7) : raw || "";
 
+        const url = `${LIST_URL}?page=${page}&limit=${PAGE_SIZE}`;
+        console.log("[tickets] FETCH ->", url, "tokenPresent:", !!token);
+
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = `Bearer ${token}`;
+
+        
         const res = await fetch(url, {
-          method: "GET", // Make sure to use GET or the appropriate method based on your API
-          credentials: "include", // Optional, only if needed
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token") || ""}`, // If using a token for authentication
-          },
+          method: "GET",
+          mode: "cors",
+         
+          headers,
         });
 
-        // If the response is not OK, throw an error
+        if (!res) throw new Error("No response from server (network error)");
+
+        const rawText = await res.text().catch(() => "");
+        let body = null;
+        try { body = JSON.parse(rawText); } catch (e) { body = null; }
+
         if (!res.ok) {
-          let msg = `HTTP ${res.status}`;
-          try {
-            const j = await res.json();
-            msg = j?.error || j?.message || msg;
-          } catch {}
+          console.error("[tickets] fetch failed", { url: res.url, status: res.status, body: rawText });
+          const msg = (body && (body.error || body.message)) || rawText || `HTTP ${res.status}`;
           throw new Error(msg);
         }
 
-        const body = await res.json();
-        const list = Array.isArray(body) ? body : body.data || body.items || [];
-        const total = body.total || list.length;  // Adjust according to your API response
+        const list = Array.isArray(body) ? body : body?.data || body?.items || [];
+        const total = body?.total || list.length;
 
         const mapped = list.map((u) => ({
-          sl: u.id || u._id || `#${String(u.id || u._id || "").slice(-4)}`,
+          
+          ticketId: u.ticketId || u.id || u._id || `#${String(u.id || u._id || "").slice(-4)}`,
+          sl: u.ticketId || `#${String(u.id || u._id || "").slice(-4)}`,
           date: u.createdAt ? new Date(u.createdAt).toLocaleDateString() : u.date,
           status: u.status || "pending",
           message: u.message || "No message",
@@ -108,9 +132,11 @@ export default function AgentApprovalTable() {
 
         if (!off) {
           setRows(mapped);
+          setUserdata(mapped);
           setTotalItems(total);
         }
       } catch (e) {
+        console.error("[tickets] error:", e);
         if (!off) setErr(e.message || "Failed to load");
       } finally {
         if (!off) setLoading(false);
@@ -127,11 +153,13 @@ export default function AgentApprovalTable() {
   const goPrev = () => setPage((p) => Math.max(1, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
 
+console.log(userdata);
+
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
       <Header />
 
-      {/* Error/Loading State */}
+      
       <div className="mt-2 mb-2">
         {loading && <p className="text-sm text-gray-500">Loading…</p>}
         {err && <p className="text-sm text-red-600">{err}</p>}
@@ -140,39 +168,39 @@ export default function AgentApprovalTable() {
       <table className="min-w-[720px] w-full text-left table-fixed mt-[18px]">
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
-            <th className="py-3 pr-4 w-[200px]">Ticket ID</th>
-            <th className="py-3 pr-4">Date</th>
-            <th className="py-3 pr-4">Email</th>
-            <th className="py-3 pr-4">Mobile Number</th>
-            <th className="py-3 pr-2">Message</th>
-            <th className="py-3 pr-2">Status</th>
-            <th className="py-3 pr-2">Action</th>
+            <th className="py-3 pr-4 w-[15%]">Ticket ID</th>
+            <th className="py-3 pr-4 w-[10%]">Date</th>
+            <th className="py-3 pr-4 w-[20%]">Email</th>
+            <th className="py-3 pr-4 w-[15%]">Mobile Number</th>
+            <th className="py-3 pr-2 w-[25%]">Message</th>
+            <th className="py-3 pr-2 w-[15%]">Status</th>
+            <th className="py-3 pr-2 w-[15%]">Action</th>
           </tr>
         </thead>
 
         <tbody className="bg-white">
-          {rows.map((u) => (
-            <tr key={u.sl} className="align-middle">
+          {userdata.map((r) => (
+            <tr key={r.ticketId} className="align-middle">
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] w-[200px] whitespace-nowrap">
-                {u.sl}
+                {r.ticketId}
               </td>
-              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{u.date}</td>
-              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{u.email}</td>
-              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{u.mobile}</td>
-              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{u.message}</td>
-              <td className="py-4 pr-4"><ActionCell status={u.status} /></td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.email}</td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.mobile}</td>
+              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.message}</td>
+              <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
               <td className="py-4 pr-2">
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    aria-label={`View details of ${u.sl}`}
+                    aria-label={`View details of ${r.sl}`}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#FFC42D] hover:opacity-90 transition"
                   >
                     <EyeIcon />
                   </button>
                   <button
                     type="button"
-                    aria-label={`Turn action for ${u.sl}`}
+                    aria-label={`Turn action for ${r.sl}`}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#015093] hover:opacity-90 transition"
                   >
                     <TurnIcon />

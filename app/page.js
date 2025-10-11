@@ -16,8 +16,8 @@ const setAxiosAuthHeader = (token) => {
 };
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("admin@example.com");
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("admin@gmail.com");
+  const [password, setPassword] = useState("12345678");
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState(null);

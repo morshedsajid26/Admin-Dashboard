@@ -41,6 +41,7 @@ export default function ForgotPasswordPage() {
       });
 
       localStorage.setItem("resetEmail", email);
+      console.log(email);
 
       if (!response.ok) {
         const errorMessage = await response.text();

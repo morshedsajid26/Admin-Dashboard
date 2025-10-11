@@ -1,31 +1,15 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Header from "@/app/component/Header";
 import Image from "next/image";
+import Cookies from "js-cookie";
 
-
-const baseRows = [
-  { sl: "#1231", name: "Annette Black",  avatar: "user1.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "10/28/12", status: "pending",  car:"Toyota Corolla" },
-  { sl: "#1232", name: "Jerome Bell",    avatar: "user2.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "01/05/12", status: "approved", car:"Honda Civic" },
-  { sl: "#1233", name: "Ronald Richards",avatar: "user3.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "08/02/19", status: "pending",  car:"BMW ix3" },
-  { sl: "#1234", name: "Dianne Russell", avatar: "user4.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "08/03/14", status: "pending",  car:"Ford F-150" },
-  { sl: "#1235", name: "Albert Flores",  avatar: "user5.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "02/11/12", status: "pending",  car:"Toyota Corolla" },
-  { sl: "#1236", name: "Eleanor Pena",   avatar: "user6.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "10/06/13", status: "pending",  car:"BMW ix3" },
-  { sl: "#1237", name: "Floyd Miles",    avatar: "user7.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "05/03/14", status: "rejected", car:"Ford F-150" },
-  { sl: "#1238", name: "Cody Fisher",    avatar: "user8.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "07/18/17", status: "pending",  car:"Honda Civic" },
-  { sl: "#1239", name: "Ralph Edwards",  avatar: "user9.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "04/04/18", status: "pending",  car:"Ford F-150" },
-  { sl: "#1240", name: "Devon Lane",     avatar: "user10.png", location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "08/21/15", status: "pending",  car:"Toyota Corolla" },
-   { sl: "#1236", name: "Eleanor Pena",   avatar: "user6.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "10/06/13", status: "pending",  car:"BMW ix3" },
-  { sl: "#1237", name: "Floyd Miles",    avatar: "user7.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "05/03/14", status: "rejected", car:"Ford F-150" },
-  { sl: "#1238", name: "Cody Fisher",    avatar: "user8.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "07/18/17", status: "pending",  car:"Honda Civic" },
-  { sl: "#1239", name: "Ralph Edwards",  avatar: "user9.png",  location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "04/04/18", status: "pending",  car:"Ford F-150" },
-  { sl: "#1240", name: "Devon Lane",     avatar: "user10.png", location:"Location", price:"$10,000", margin:"$2,000", mobile:"(907) 555-0101", date: "08/21/15", status: "pending",  car:"Toyota Corolla" },
-];
-
-
+const API_BASE = "https://ai-car-app-sandy.vercel.app";
+const CARS_URL = `${API_BASE}/admin/cars`;
 const PAGE_SIZE = 10;
 
+/* ---------- UI helpers (unchanged visual) ---------- */
 function Badge({ children, color }) {
   const cls =
     color === "blue"
@@ -56,8 +40,9 @@ function OutlineBtn({ children, tone = "slate", onClick }) {
 }
 
 function ActionCell({ status }) {
-  if (status === "approved") return <Badge color="blue">Approved</Badge>;
-  if (status === "rejected") return <Badge color="red">Rejected</Badge>;
+  const s = String(status || "pending").toLowerCase();
+  if (s === "approved") return <Badge color="blue">Approved</Badge>;
+  if (s === "rejected") return <Badge color="red">Rejected</Badge>;
   return (
     <div className="flex items-center gap-3 text-[16px] font-inter">
       <OutlineBtn tone="blue">Approve</OutlineBtn>
@@ -67,19 +52,21 @@ function ActionCell({ status }) {
 }
 
 function Person({ name, avatar }) {
-  const src = avatar.startsWith("/") ? avatar : `/${avatar}`;
+  const isLocal = typeof avatar === "string" && avatar.startsWith("/");
+  const src = isLocal ? avatar : (avatar || "/user1.png");
   return (
     <div className="flex items-center gap-3">
       <div className="relative h-9 w-9">
         <Image
           src={src}
-          alt={name}
+          alt={name || "Agent"}
           fill
           sizes="36px"
           className="rounded-full object-cover ring-2 ring-white shadow"
+          unoptimized={!isLocal}
         />
       </div>
-      <span className="text-[#333333] font-inter text-[16px]">{name}</span>
+      <span className="text-[#333333] font-inter text-[16px]">{name || "Unknown"}</span>
     </div>
   );
 }
@@ -93,58 +80,142 @@ function EyeIcon() {
   );
 }
 
+/* ---------- tiny utils ---------- */
+const fmtDate = (d) => {
+  if (!d) return "";
+  const t = new Date(d);
+  if (isNaN(t)) return String(d);
+  const mm = String(t.getMonth() + 1).padStart(2, "0");
+  const dd = String(t.getDate()).padStart(2, "0");
+  const yy = String(t.getFullYear()).slice(-2);
+  return `${mm}/${dd}/${yy}`;
+};
+
+const normalizeLocation = (loc) => {
+  if (!loc) return "Location";
+  if (typeof loc === "string") return loc;
+  if (Array.isArray(loc)) return loc.filter(Boolean).join(", ");
+  if (typeof loc === "object") {
+    const city = loc.city || loc.town || loc.area || loc.name;
+    const country = loc.country;
+    const out = [city, country].filter(Boolean).join(", ");
+    return out || "Location";
+  }
+  return "Location";
+};
+
+/* ================== Component ================== */
 export default function AgentApprovalTable() {
   const [page, setPage] = useState(1);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
 
-  const totalItems = baseRows.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
-  const startIdx = (page - 1) * PAGE_SIZE;
+  useEffect(() => {
+    let off = false;
+    (async () => {
+      try {
+        setLoading(true);
+        setErr("");
 
-  
+        // token (optional)
+        let token = Cookies.get("token") || localStorage.getItem("token") || "";
+        if (token && token.startsWith('"') && token.endsWith('"')) {
+          try { token = JSON.parse(token); } catch {}
+        }
+        if (token.startsWith("Bearer ")) token = token.slice(7);
+
+        const res = await fetch(CARS_URL, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+        if (!res.ok) {
+          const text = await res.text().catch(() => "");
+          let msg;
+          try { msg = JSON.parse(text)?.message || JSON.parse(text)?.error; } catch {}
+          throw new Error(msg || text || `HTTP ${res.status}`);
+        }
+
+        const body = await res.json();
+        const list = Array.isArray(body) ? body : body?.cars || body?.data || body?.items || [];
+
+        const mapped = list.map((c, i) => ({
+          id: c._id ?? c.id ?? `${i}`,
+          sl: c.sl || `#${String(c._id || c.id || i).slice(-4)}`,
+          car: c.carName || c.name || c.model || c.title || "Unknown Car",
+          location: normalizeLocation(c.location),
+          price: typeof c.price === "number" ? `$${c.price.toLocaleString()}` : (c.price || "$0"),
+          margin: typeof c.margin === "number" ? `$${c.margin.toLocaleString()}` : (c.margin || "$0"),
+          name: c.agentName || c.agent?.name || c.ownerName || c.sellerName || "Unknown",
+          avatar: c.agentAvatar || c.agent?.avatar || c.ownerAvatar || c.sellerAvatar || "/user1.png",
+          date: fmtDate(c.createdAt || c.dateAdded || c.created_on),
+          status: String(c.status || "pending").toLowerCase(),
+        }));
+
+        if (!off) setRows(mapped);
+      } catch (e) {
+        if (!off) setErr(e.message || "Failed to load cars");
+      } finally {
+        if (!off) setLoading(false);
+      }
+    })();
+    return () => { off = true; };
+  }, []);
+
+  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const currentRows = useMemo(() => {
-   return baseRows.slice(startIdx, startIdx + PAGE_SIZE);
- }, [startIdx]); 
- 
- 
- const pageList = useMemo(() => {
-   if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
-   const out = [];
-   const left = Math.max(2, page - 2);
-   const right = Math.min(totalPages - 1, page + 2);
-   out.push(1);
-   if (left > 2) out.push("…");
-   for (let i = left; i <= right; i++) out.push(i);
-   if (right < totalPages - 1) out.push("…");
-   out.push(totalPages);
-   return out;
- }, [page, totalPages]); 
- 
- 
-   const goPrev = () => setPage((p) => Math.max(1, p - 1));
-   const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
+    const start = (page - 1) * PAGE_SIZE;
+    return rows.slice(start, start + PAGE_SIZE);
+  }, [rows, page]);
+
+  const pageList = useMemo(() => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const out = [1];
+    const left = Math.max(2, page - 2);
+    const right = Math.min(totalPages - 1, page + 2);
+    if (left > 2) out.push("…");
+    for (let i = left; i <= right; i++) out.push(i);
+    if (right < totalPages - 1) out.push("…");
+    out.push(totalPages);
+    return out;
+  }, [page, totalPages]);
 
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
       <Header />
 
+      <div className="mt-2 mb-2">
+        {loading && <p className="text-sm text-gray-500">Loading…</p>}
+        {err && <p className="text-sm text-red-600">{err}</p>}
+      </div>
+
       <table className="min-w-[920px] w-full text-left table-fixed mt-[18px]">
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
-            <th className="py-3 pr-4 w-[100px]">SL No</th>
-            <th className="py-3 pr-2  w-[150px]">Car Name</th>
-            <th className="py-3 pr-2 w-[120px]">Location</th>
-            <th className="py-3 pr-2 w-[80px]">Price</th>
-            <th className="py-3 pr-4 w-[80px]">Margin</th>
-            <th className="py-3 pr-4 w-[200px]">Agent Name</th>
-            <th className="py-3 pr-2 w-[120px]">Date Added</th>
-            <th className="py-3 pr-4 w-[70px]">Details</th>
-            <th className="py-3 pr-2 w-[220px]">Action</th>
+            <th className="py-3 pr-4 w-[5%]">SL No</th>
+            <th className="py-3 pr-2 w-[7%]">Car Name</th>
+            <th className="py-3 pr-2 w-[10%]">Location</th>
+            <th className="py-3 pr-2 w-[5%]">Price</th>
+            <th className="py-3 pr-4 w-[5%]">Margin</th>
+            <th className="py-3 pr-4 w-[10%]">Agent Name</th>
+            <th className="py-3 pr-2 w-[7%]">Date Added</th>
+            <th className="py-3 pr-4 w-[5%]">Details</th>
+            <th className="py-3 pr-2 w-[10%] text-center ">Action</th>
           </tr>
         </thead>
 
         <tbody className="bg-white">
+          {!loading && rows.length === 0 && (
+            <tr>
+              <td colSpan={9} className="py-6 text-center text-gray-500">No cars found</td>
+            </tr>
+          )}
+
           {currentRows.map((r) => (
-            <tr key={r.sl} className="align-middle">
+            <tr key={r.id || r.sl} className="align-middle">
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] whitespace-nowrap">{r.sl}</td>
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.car}</td>
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.location}</td>
@@ -167,16 +238,14 @@ export default function AgentApprovalTable() {
         </tbody>
       </table>
 
-    
       <div className="mt-6 flex justify-center">
         <nav className="inline-flex items-center gap-4" aria-label="Pagination">
           <button
-            onClick={goPrev}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
             className="text-[#333333] flex items-center gap-4 font-inter text-[16px] disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <IoIosArrowBack />
-            Previous
+            <IoIosArrowBack /> Previous
           </button>
 
           {pageList.map((p, i) =>
@@ -197,12 +266,11 @@ export default function AgentApprovalTable() {
           )}
 
           <button
-            onClick={goNext}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             className="text-[#333333] flex items-center gap-4 font-inter text-[16px] disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Next
-            <IoIosArrowForward />
+            Next <IoIosArrowForward />
           </button>
         </nav>
       </div>

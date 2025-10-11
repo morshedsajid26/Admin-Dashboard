@@ -126,6 +126,18 @@ export default function RegisterPage() {
         >
           {loading ? "Registering..." : "Register"}
         </button>
+
+        <div>
+          <p className="font-inter text-center mt-5">
+            Already have an account?{" "}
+            <a
+              href="/"
+              className="text-[#333333] hover:text-[#015093] font-inter text-[16px] hover:underline"
+            >
+              Sign In
+            </a>
+          </p>
+        </div>
       </form>
     </main>
   );

@@ -1,36 +1,25 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-
 import Image from "next/image";
 import Header from "@/app/component/Header";
+import Cookies from "js-cookie";
 
-
-const baseRows = [
-  { sl: "#1231", name: "Annette Black",  avatar: "user1.png",  date: "10/28/12", status: "pending"  },
-  { sl: "#1232", name: "Jerome Bell",    avatar: "user2.png",  date: "01/05/12", status: "approved" },
-  { sl: "#1233", name: "Ronald Richards",avatar: "user3.png",  date: "08/02/19", status: "pending"  },
-  { sl: "#1234", name: "Dianne Russell", avatar: "user4.png",  date: "08/03/14", status: "pending"  },
-  { sl: "#1235", name: "Albert Flores",  avatar: "user5.png",  date: "02/11/12", status: "pending"  },
-  { sl: "#1236", name: "Eleanor Pena",   avatar: "user6.png",  date: "10/06/13", status: "pending"  },
-  { sl: "#1237", name: "Floyd Miles",    avatar: "user7.png",  date: "05/03/14", status: "rejected" },
-  { sl: "#1238", name: "Cody Fisher",    avatar: "user8.png",  date: "07/18/17", status: "pending"  },
-  { sl: "#1239", name: "Ralph Edwards",  avatar: "user9.png",  date: "04/04/18", status: "pending"  },
-  { sl: "#1240", name: "Devon Lane",     avatar: "user10.png", date: "08/21/15", status: "pending"  },
-  { sl: "#1237", name: "Floyd Miles",    avatar: "user7.png",  date: "05/03/14", status: "rejected" },
-  { sl: "#1238", name: "Cody Fisher",    avatar: "user8.png",  date: "07/18/17", status: "pending"  },
-  { sl: "#1239", name: "Ralph Edwards",  avatar: "user9.png",  date: "04/04/18", status: "pending"  },
-  { sl: "#1240", name: "Devon Lane",     avatar: "user10.png", date: "08/21/15", status: "pending"  },
-];
-
-
+const API_BASE = "https://ai-car-app-sandy.vercel.app";
+const LIST_URL = `${API_BASE}/admin/user-list`;
 const PAGE_SIZE = 10;
+
+// ✅ approve -> active, reject -> inactive
+const TARGET_STATUS = {
+  approve: "active",
+  reject: "inactive",
+};
 
 function Badge({ children, tone }) {
   const color =
-    tone === "approved"
+    tone === "active"
       ? "text-[#0DBF69] bg-[#0DBF69]/10 ring-1 ring-[#0DBF69]/20"
-      : tone === "rejected"
+      : tone === "inactive"
       ? "text-[#DC4600] bg-[#DC4600]/10 ring-1 ring-[#DC4600]/20"
       : "text-slate-600 bg-slate-100 ring-1 ring-slate-200";
   return (
@@ -40,7 +29,7 @@ function Badge({ children, tone }) {
   );
 }
 
-function OutlineBtn({ children, tone = "slate", onClick }) {
+function OutlineBtn({ children, tone = "slate", onClick, disabled }) {
   const tones = {
     blue:  "text-[#49A0E6] ring-1 ring-inset ring-[#49A0E6]/20 hover:bg-[#49A0E6]/10",
     red:   "text-[#DC4600] ring-1 ring-inset ring-[#DC4600]/20 hover:bg-[#DC4600]/10",
@@ -50,20 +39,26 @@ function OutlineBtn({ children, tone = "slate", onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center rounded-md px-6 py-[9px] text-[16px] font-inter cursor-pointer ${tones[tone]} transition`}
+      disabled={disabled}
+      className={`inline-flex items-center rounded-md px-6 py-[9px] text-[16px] font-inter cursor-pointer disabled:opacity-50 ${tones[tone]} transition`}
     >
       {children}
     </button>
   );
 }
 
-function ActionCell({ status }) {
-  if (status === "approved") return <Badge tone="approved">Approved</Badge>;
-  if (status === "rejected") return <Badge tone="rejected">Rejected</Badge>;
+function ActionCell({ status, onApprove, onReject, busy }) {
+  if (status === "active")   return <Badge tone="active">Approved</Badge>;
+  if (status === "inactive") return <Badge tone="inactive">Rejected</Badge>;
+  // pending/others -> buttons
   return (
     <div className="flex items-center gap-3 text-[16px] font-inter">
-      <OutlineBtn tone="blue">Approve</OutlineBtn>
-      <OutlineBtn tone="red">Reject</OutlineBtn>
+      <OutlineBtn tone="blue" onClick={onApprove} disabled={busy === "approve" || busy === "reject"}>
+        {busy === "approve" ? "Approving..." : "Approve"}
+      </OutlineBtn>
+      <OutlineBtn tone="red" onClick={onReject} disabled={busy === "approve" || busy === "reject"}>
+        {busy === "reject" ? "Rejecting..." : "Reject"}
+      </OutlineBtn>
     </div>
   );
 }
@@ -77,39 +72,184 @@ function EyeIcon() {
   );
 }
 
+function fmtDate(d) {
+  const dt = new Date(d);
+  const mm = String(dt.getMonth() + 1).padStart(2, "0");
+  const dd = String(dt.getDate()).padStart(2, "0");
+  const yy = String(dt.getFullYear()).slice(-2);
+  return `${mm}/${dd}/${yy}`;
+}
+
 export default function AgentApprovalTable() {
   const [page, setPage] = useState(1);
+  const [userdata, setUserdata] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+  const [busyRow, setBusyRow] = useState({}); // { [id]: "approve" | "reject" }
 
-  const totalItems = baseRows.length;
+  const totalItems = userdata.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
-  const startIdx = (page - 1) * PAGE_SIZE;
 
-  
+  const pageList = useMemo(() => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const out = [];
+    const left = Math.max(2, page - 2);
+    const right = Math.min(totalPages - 1, page + 2);
+    out.push(1);
+    if (left > 2) out.push("…");
+    for (let i = left; i <= right; i++) out.push(i);
+    if (right < totalPages - 1) out.push("…");
+    out.push(totalPages);
+    return out;
+  }, [page, totalPages]);
+
   const currentRows = useMemo(() => {
-   return baseRows.slice(startIdx, startIdx + PAGE_SIZE);
- }, [startIdx]); 
- 
- 
- const pageList = useMemo(() => {
-   if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
-   const out = [];
-   const left = Math.max(2, page - 2);
-   const right = Math.min(totalPages - 1, page + 2);
-   out.push(1);
-   if (left > 2) out.push("…");
-   for (let i = left; i <= right; i++) out.push(i);
-   if (right < totalPages - 1) out.push("…");
-   out.push(totalPages);
-   return out;
- }, [page, totalPages]); 
- 
- 
-   const goPrev = () => setPage((p) => Math.max(1, p - 1));
-   const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
+    const start = (page - 1) * PAGE_SIZE;
+    return userdata.slice(start, start + PAGE_SIZE);
+  }, [page, userdata]);
+
+  // Load list
+  useEffect(() => {
+    let off = false;
+    (async () => {
+      try {
+        setLoading(true);
+        setErr("");
+
+        // normalize token (handle JSON-stringified or "Bearer " prefixed)
+        let raw = Cookies.get("token") || (typeof window !== "undefined" && localStorage.getItem("token")) || "";
+        if (raw && raw.startsWith('"') && raw.endsWith('"')) {
+          try { raw = JSON.parse(raw); } catch {}
+        }
+        const token = raw && raw.toString().startsWith("Bearer ") ? raw.toString().slice(7) : raw;
+
+        const url = `${LIST_URL}?page=1&limit=${PAGE_SIZE}`;
+        console.log("[users] fetching:", url, "tokenPresent:", !!token);
+
+        const res = await fetch(url, {
+          method: "GET",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+
+        if (!res) throw new Error("No response from server (network error)");
+
+        if (res.status === 401 || res.status === 403) {
+          console.warn("[users] auth failed", res.status);
+          Cookies.remove("token");
+          localStorage.removeItem("token");
+          if (!off) setErr("Session expired. Please login again.");
+          return;
+        }
+
+        if (!res.ok) {
+          const text = await res.text().catch(() => "");
+          console.error("[users] fetch failed", { url: res.url, status: res.status, body: text });
+          let parsed;
+          try { parsed = JSON.parse(text); } catch (_) { parsed = null; }
+          const msg = parsed?.message || parsed?.error || text || `HTTP ${res.status}`;
+          throw new Error(msg);
+        }
+
+        const body = await res.json();
+        console.log("[users] body:", body);
+
+        const list = (Array.isArray(body) && body) || body?.users || body?.data || body?.items || [];
+        const mapped = list.map((u) => ({
+          id: u._id ?? u.id,
+          sl: u.sl || `#${String(u.id || u._id || "").slice(-4)}`,
+          name: u.name || [u.firstName, u.lastName].filter(Boolean).join(" ") || "Unknown",
+          email: u.email || "unknown@example.com",
+          mobile: u.phone || u.mobile || "-",
+          date: u.createdAt ? fmtDate(u.createdAt) : (u.date || ""),
+          avatar: u.avatar || u.photoUrl || u.avatarUrl || "/user1.png",
+          status: "pending", // keep initial UI pending as you wanted
+          remoteStatus: u.status || "pending",
+        }));
+
+        if (!off) {
+          setUserdata(mapped);
+          setPage(1);
+        }
+      } catch (e) {
+        console.error("[users] load error:", e);
+        if (!off) setErr(e.message || "Failed to load");
+      } finally {
+        if (!off) setLoading(false);
+      }
+    })();
+    return () => { off = true; };
+  }, []);
+
+  // Update status: approve -> active, reject -> inactive
+  async function updateStatus(rowId, action) {
+    const newStatus = TARGET_STATUS[action]; // "active" | "inactive"
+    if (!newStatus) return;
+
+    // optimistic update: keep previous state to revert on error
+    const prev = userdata;
+    setBusyRow((prevBusy) => ({ ...prevBusy, [rowId]: action }));
+    try {
+      // normalize token
+      let raw = Cookies.get("token") || (typeof window !== "undefined" && localStorage.getItem("token")) || "";
+      if (raw && raw.startsWith('"') && raw.endsWith('"')) {
+        try { raw = JSON.parse(raw); } catch {}
+      }
+      const token = raw && raw.toString().startsWith("Bearer ") ? raw.toString().slice(7) : raw;
+
+      const url = `${API_BASE}/admin/approved-user/${rowId}`;
+      console.log("[updateStatus] PATCH", url, "->", newStatus, "tokenPresent:", !!token);
+
+      const res = await fetch(url, {
+        method: "PATCH",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res) throw new Error("No response from server (network error)");
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        console.error("[updateStatus] failed", { url: res.url, status: res.status, body: text });
+        let parsed;
+        try { parsed = JSON.parse(text); } catch (_) { parsed = null; }
+        const msg = parsed?.message || parsed?.error || text || `HTTP ${res.status}`;
+        throw new Error(msg);
+      }
+
+      // success -> reflect change
+      setUserdata((prevList) => prevList.map((u) => (u.id === rowId ? { ...u, status: newStatus } : u)));
+    } catch (e) {
+      console.error("[updateStatus] error:", e);
+      // revert optimistic change if any
+      setUserdata(prev);
+      alert(e.message || "Failed to update status. See console/network tab.");
+    } finally {
+      setBusyRow((prevBusy) => {
+        const { [rowId]: _omit, ...rest } = prevBusy;
+        return rest;
+      });
+    }
+  }
+
+  const goPrev = () => setPage((p) => Math.max(1, p - 1));
+  const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
 
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
       <Header />
+
+      <div className="mt-2 mb-2">
+        {loading && <p className="text-sm text-gray-500">Loading…</p>}
+        {err && <p className="text-sm text-red-600">{err}</p>}
+      </div>
 
       <table className="min-w-[720px] w-full text-left table-fixed mt-[18px]">
         <thead>
@@ -123,13 +263,22 @@ export default function AgentApprovalTable() {
         </thead>
 
         <tbody className="bg-white">
+          {!loading && currentRows.length === 0 && (
+            <tr>
+              <td colSpan={5} className="py-6 text-center text-gray-500">No users found</td>
+
+
+              
+            </tr>
+          )}
+
           {currentRows.map((r) => {
-            const src = r.avatar.startsWith("/") ? r.avatar : `/${r.avatar}`;
+            const src = r.avatar?.startsWith("/") ? r.avatar : `/${r.avatar}`;
+            const busy = busyRow[r.id]; // "approve" | "reject" | undefined
+
             return (
-              <tr key={r.sl} className="align-middle">
-                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] whitespace-nowrap">
-                  {r.sl}
-                </td>
+              <tr key={r.id || r.sl} className="align-middle">
+                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] whitespace-nowrap">{r.sl}</td>
 
                 <td className="py-4 pr-4">
                   <div className="flex items-center gap-3">
@@ -147,7 +296,15 @@ export default function AgentApprovalTable() {
                 </td>
 
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>
-                <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
+
+                <td className="py-4 pr-4">
+                  <ActionCell
+                    status={r.status}
+                    busy={busy}
+                    onApprove={() => updateStatus(r.id, "approve")}
+                    onReject={() => updateStatus(r.id, "reject")}
+                  />
+                </td>
 
                 <td className="py-4 pr-2">
                   <button
@@ -164,16 +321,10 @@ export default function AgentApprovalTable() {
         </tbody>
       </table>
 
-      
       <div className="mt-6 flex justify-center">
         <nav className="inline-flex items-center gap-4" aria-label="Pagination">
-          <button
-            onClick={goPrev}
-            disabled={page === 1}
-            className="text-[#333333] flex items-center gap-4 font-inter text-[16px] disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <IoIosArrowBack />
-            Previous
+          <button onClick={goPrev} disabled={page === 1} className="text-[#333333] flex items-center gap-4 font-inter text-[16px] disabled:opacity-40 disabled:cursor-not-allowed">
+            <IoIosArrowBack /> Previous
           </button>
 
           {pageList.map((p, i) =>
@@ -193,13 +344,8 @@ export default function AgentApprovalTable() {
             )
           )}
 
-          <button
-            onClick={goNext}
-            disabled={page === totalPages}
-            className="text-[#333333] flex items-center gap-4 font-inter text-[16px] disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Next
-            <IoIosArrowForward />
+          <button onClick={goNext} disabled={page === totalPages} className="text-[#333333] flex items-center gap-4 font-inter text-[16px] disabled:opacity-40 disabled:cursor-not-allowed">
+            Next <IoIosArrowForward />
           </button>
         </nav>
       </div>
