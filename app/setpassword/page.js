@@ -20,7 +20,7 @@ export default function ResetPasswordPage() {
   const router = useRouter();
   const sp = useSearchParams();
 
-  // OTP/Forgot থেকে ইমেইল resolve
+ 
   useEffect(() => {
     const q =
       (sp?.get("email") || sp?.get("e") || sp?.get("userEmail") || "")
@@ -73,7 +73,7 @@ export default function ResetPasswordPage() {
       setBusy(true);
       setError("");
 
-      // ✅ তোমার API: { email, newPassword }
+      
       const payload = { email, newPassword: newPass };
 
       const res = await fetch(API_RESET, {
@@ -82,16 +82,16 @@ export default function ResetPasswordPage() {
         body: JSON.stringify(payload),
       });
 
-      // চেষ্টা করেও JSON না এলে ফাঁকা অবজেক্ট নাও
+      
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok || data?.success === false) {
         throw new Error(data?.message || data?.error || `HTTP ${res.status}`);
       }
 
-      // সফল হলে লোকাল ইমেইল ক্লিন + রিডাইরেক্ট
+      
       if (typeof window !== "undefined") localStorage.removeItem("resetEmail");
-      router.replace("/resetsuccess"); // চাইলে "/login"
+      router.replace("/resetsuccess"); 
     } catch (e) {
       setError(e.message || "Failed to reset password");
     } finally {

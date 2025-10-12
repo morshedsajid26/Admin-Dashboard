@@ -1,15 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Cookies from "js-cookie"; // npm i js-cookie
+import Cookies from "js-cookie"; 
 import { useSearchParams, useRouter } from "next/navigation";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://ai-car-app-sandy.vercel.app";
-const LOGIN_URL = `${API_BASE}/login`; // প্রয়োজন হলে বদলে নাও
+const LOGIN_URL = `${API_BASE}/login`;
 
-// helper: axios default header সেট করা
+
 const setAxiosAuthHeader = (token) => {
   if (token) axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   else delete axios.defaults.headers.common["Authorization"];
@@ -26,7 +26,7 @@ export default function LoginPage() {
   const sp = useSearchParams();
   const callbackUrl = sp.get("redirect") || "/dashboard";
 
-  // যদি আগেই কুকিতে টোকেন থাকে, সরাসরি রিডাইরেক্ট
+  
   useEffect(() => {
     const existing = Cookies.get("token");
     if (existing) {

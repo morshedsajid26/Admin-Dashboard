@@ -50,8 +50,8 @@ export default function ForgotPasswordPage() {
         return;
       }
 
-      // Handle success (e.g., navigate to a confirmation page)
-      // Optionally, you can redirect the user to the "check mail" page after success.
+      
+      
       window.location.href = '/checkmail';
     } catch (err) {
       setError("Failed to send request. Please try again.");

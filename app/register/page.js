@@ -6,7 +6,7 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://ai-car-app-sandy.vercel.app";
-const REGISTER_URL = `${API_BASE}/register`; // প্রয়োজন হলে বদলে নাও
+const REGISTER_URL = `${API_BASE}/register`; 
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -27,10 +27,10 @@ export default function RegisterPage() {
     try {
       const res = await axios.post(REGISTER_URL, form, {
         headers: { "Content-Type": "application/json" },
-        withCredentials: false, // client-side cookie set করব না এখানে
+        withCredentials: false, 
       });
 
-      // success: কিছু API 200, কিছু 201 দেয়—দুটাই ধরলাম
+     
       if (res.status === 200 || res.status === 201) {
         router.replace("/?registered=1");
       } else {
