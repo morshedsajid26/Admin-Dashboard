@@ -9,7 +9,7 @@ const API_BASE = "https://ai-car-app-sandy.vercel.app";
 const CARS_URL = `${API_BASE}/admin/cars`;
 const PAGE_SIZE = 10;
 
-/* ---------- UI helpers (unchanged visual) ---------- */
+
 function Badge({ children, color }) {
   const cls =
     color === "blue"
@@ -80,7 +80,7 @@ function EyeIcon() {
   );
 }
 
-/* ---------- tiny utils ---------- */
+
 const fmtDate = (d) => {
   if (!d) return "";
   const t = new Date(d);

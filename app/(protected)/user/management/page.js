@@ -4,10 +4,10 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { AiOutlineStop } from "react-icons/ai";
 import Image from "next/image";
 import Header from "@/app/component/Header";
-import Cookies from "js-cookie"; // যদি টোকেন কুকিতে থাকে
+import Cookies from "js-cookie"; 
 
 const API_BASE = "https://ai-car-app-sandy.vercel.app";
-const LIST_URL = `${API_BASE}/admin/user-list`; // ← সঠিক এন্ডপয়েন্ট
+const LIST_URL = `${API_BASE}/admin/user-list`; 
 const PAGE_SIZE = 10;
 
 function StopIcon() {
@@ -46,7 +46,7 @@ export default function AgentApprovalTable() {
     return out;
   }, [page, totalPages]);
 
-  // 🔹 লোডার
+  
   useEffect(() => {
     let off = false;
     (async () => {
@@ -72,7 +72,7 @@ export default function AgentApprovalTable() {
             const j = await res.json();
             msg = j?.error || j?.message || msg;
           } catch (err) {
-            // ignore JSON parse error
+            
           }
           throw new Error(msg);
         }
