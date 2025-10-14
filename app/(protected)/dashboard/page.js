@@ -24,18 +24,18 @@ const Page = () => {
   const [yearValue, setYearValue] = useState("2025");
 
   useEffect(() => {
-    // JWT কুকি চেক
+   
     const token = Cookies.get("token");
     if (!token) {
       router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
-    // Optional: axios default auth header
+    
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     setReady(true);
   }, [router, pathname]);
 
-  if (!ready) return null; // চাইলে loader দাও
+  if (!ready) return null; 
 
   const years = ["2025", "2024", "2023", "2022", "2021", "2020"];
 
