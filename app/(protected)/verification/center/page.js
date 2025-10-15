@@ -18,9 +18,9 @@ const TARGET_STATUS = {
 function Badge({ children, tone }) {
   const color =
     tone === "active"
-      ? "text-[#0DBF69] bg-[#0DBF69]/10 ring-1 ring-[#0DBF69]/20"
+      ? "text-[#0DBF69] bg-[#0DBF69]/10 ring-1 ring-[#0DBF69]/20 w-full  flex items-center justify-center"
       : tone === "inactive"
-      ? "text-[#DC4600] bg-[#DC4600]/10 ring-1 ring-[#DC4600]/20"
+      ? "text-[#DC4600] bg-[#DC4600]/10 ring-1 ring-[#DC4600]/20 w-full  flex items-center justify-center"
       : "text-slate-600 bg-slate-100 ring-1 ring-slate-200";
   return (
     <span className={`inline-flex items-center rounded-[5px] px-6 py-[9px] text-[16px] font-inter ${color}`}>
@@ -116,46 +116,23 @@ export default function AgentApprovalTable() {
         setLoading(true);
         setErr("");
 
-        // normalize token (handle JSON-stringified or "Bearer " prefixed)
         let raw = Cookies.get("token") || (typeof window !== "undefined" && localStorage.getItem("token")) || "";
         if (raw && raw.startsWith('"') && raw.endsWith('"')) {
           try { raw = JSON.parse(raw); } catch {}
         }
         const token = raw && raw.toString().startsWith("Bearer ") ? raw.toString().slice(7) : raw;
 
-        const url = `${LIST_URL}?page=1&limit=${PAGE_SIZE}`;
-        console.log("[users] fetching:", url, "tokenPresent:", !!token);
-
-        const res = await fetch(url, {
+        const res = await fetch(`${LIST_URL}?page=1&limit=${PAGE_SIZE}`, {
           method: "GET",
-          mode: "cors",
           headers: {
             "Content-Type": "application/json",
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         });
 
-        if (!res) throw new Error("No response from server (network error)");
-
-        if (res.status === 401 || res.status === 403) {
-          console.warn("[users] auth failed", res.status);
-          Cookies.remove("token");
-          localStorage.removeItem("token");
-          if (!off) setErr("Session expired. Please login again.");
-          return;
-        }
-
-        if (!res.ok) {
-          const text = await res.text().catch(() => "");
-          console.error("[users] fetch failed", { url: res.url, status: res.status, body: text });
-          let parsed;
-          try { parsed = JSON.parse(text); } catch (_) { parsed = null; }
-          const msg = parsed?.message || parsed?.error || text || `HTTP ${res.status}`;
-          throw new Error(msg);
-        }
-
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const body = await res.json();
-        console.log("[users] body:", body);
+
 
         const list = (Array.isArray(body) && body) || body?.users || body?.data || body?.items || [];
         const mapped = list.map((u) => ({
@@ -166,8 +143,9 @@ export default function AgentApprovalTable() {
           mobile: u.phone || u.mobile || "-",
           date: u.createdAt ? fmtDate(u.createdAt) : (u.date || ""),
           avatar: u.avatar || u.photoUrl || u.avatarUrl || "/user1.png",
-          status: "pending", // keep initial UI pending as you wanted
-          remoteStatus: u.status || "pending",
+         status: u.status || "pending",
+
+          
         }));
 
         if (!off) {
@@ -184,53 +162,44 @@ export default function AgentApprovalTable() {
     return () => { off = true; };
   }, []);
 
-  // Update status: approve -> active, reject -> inactive
+  // ✅ Updated: use separate API for approve/reject
   async function updateStatus(rowId, action) {
-    const newStatus = TARGET_STATUS[action]; // "active" | "inactive"
-    if (!newStatus) return;
+    let url;
+    if (action === "approve") url = `${API_BASE}/admin/approved-user/${rowId}`;
+    else if (action === "reject") url = `${API_BASE}/admin/reject-user/${rowId}`;
+    else return;
 
-    // optimistic update: keep previous state to revert on error
     const prev = userdata;
     setBusyRow((prevBusy) => ({ ...prevBusy, [rowId]: action }));
+
     try {
-      // normalize token
       let raw = Cookies.get("token") || (typeof window !== "undefined" && localStorage.getItem("token")) || "";
       if (raw && raw.startsWith('"') && raw.endsWith('"')) {
         try { raw = JSON.parse(raw); } catch {}
       }
       const token = raw && raw.toString().startsWith("Bearer ") ? raw.toString().slice(7) : raw;
 
-      const url = `${API_BASE}/admin/approved-user/${rowId}`;
-      console.log("[updateStatus] PATCH", url, "->", newStatus, "tokenPresent:", !!token);
-
       const res = await fetch(url, {
-        method: "PATCH",
-        mode: "cors",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ status: newStatus }),
       });
 
-      if (!res) throw new Error("No response from server (network error)");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      console.log("res",res.json());
 
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        console.error("[updateStatus] failed", { url: res.url, status: res.status, body: text });
-        let parsed;
-        try { parsed = JSON.parse(text); } catch (_) { parsed = null; }
-        const msg = parsed?.message || parsed?.error || text || `HTTP ${res.status}`;
-        throw new Error(msg);
-      }
-
-      // success -> reflect change
-      setUserdata((prevList) => prevList.map((u) => (u.id === rowId ? { ...u, status: newStatus } : u)));
+      // success -> update UI
+      setUserdata((prevList) =>
+        prevList.map((u) =>
+          u.id === rowId ? { ...u, status: action === "approve" ? "active" : "inactive" } : u
+        )
+      );
     } catch (e) {
       console.error("[updateStatus] error:", e);
-      // revert optimistic change if any
-      setUserdata(prev);
-      alert(e.message || "Failed to update status. See console/network tab.");
+      setUserdata(prev); // revert
+      alert(e.message || "Failed to update status.");
     } finally {
       setBusyRow((prevBusy) => {
         const { [rowId]: _omit, ...rest } = prevBusy;
@@ -242,6 +211,7 @@ export default function AgentApprovalTable() {
   const goPrev = () => setPage((p) => Math.max(1, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
 
+  // console.log("currentRows",currentRows);
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
       <Header />
@@ -251,14 +221,14 @@ export default function AgentApprovalTable() {
         {err && <p className="text-sm text-red-600">{err}</p>}
       </div>
 
-      <table className="min-w-[720px] w-full text-left table-fixed mt-[18px]">
+      <table className="min-w-[720px] w-full text-left table-fixed mt-[18px] ">
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
-            <th className="py-3 pr-4 w-[200px]">SL No</th>
-            <th className="py-3 pr-4">Agent Name</th>
-            <th className="py-3 pr-4">Submission Date</th>
-            <th className="py-3 pr-4">Action</th>
-            <th className="py-3 pr-2">Details</th>
+            <th className="py-3 pr-4 w-[10%]">SL No</th>
+            <th className="py-3 pr-4 w-[25%]">Agent Name</th>
+            <th className="py-3 pr-4 w-[20%]">Submission Date</th>
+            <th className="py-3 pr-4 w-[15%] justify-center text-center ">Action</th>
+            <th className="py-3 pr-2 w-[30%] fle justify-center items-center text-center">Details</th>
           </tr>
         </thead>
 
@@ -266,20 +236,16 @@ export default function AgentApprovalTable() {
           {!loading && currentRows.length === 0 && (
             <tr>
               <td colSpan={5} className="py-6 text-center text-gray-500">No users found</td>
-
-
-              
             </tr>
           )}
 
           {currentRows.map((r) => {
             const src = r.avatar?.startsWith("/") ? r.avatar : `/${r.avatar}`;
-            const busy = busyRow[r.id]; // "approve" | "reject" | undefined
+            const busy = busyRow[r.id];
 
             return (
               <tr key={r.id || r.sl} className="align-middle">
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] whitespace-nowrap">{r.sl}</td>
-
                 <td className="py-4 pr-4">
                   <div className="flex items-center gap-3">
                     <div className="relative h-9 w-9">
@@ -294,10 +260,8 @@ export default function AgentApprovalTable() {
                     <span className="text-[#333333] font-inter text-[16px]">{r.name}</span>
                   </div>
                 </td>
-
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>
-
-                <td className="py-4 pr-4">
+                <td className="py-4 pr-4  w-[15%]">
                   <ActionCell
                     status={r.status}
                     busy={busy}
@@ -305,8 +269,7 @@ export default function AgentApprovalTable() {
                     onReject={() => updateStatus(r.id, "reject")}
                   />
                 </td>
-
-                <td className="py-4 pr-2">
+                <td className="py-4 pr-2 flex items-center justify-center ">
                   <button
                     type="button"
                     aria-label={`View details of ${r.name}`}

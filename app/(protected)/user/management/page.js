@@ -29,6 +29,16 @@ export default function AgentApprovalTable() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [userdata, setUserdata] = useState([]);
+  // compute rows to display for current page:
+  const currentRows = React.useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    // If server returned a total (>0) and rows length <= PAGE_SIZE, assume rows are server-side page (render as-is)
+    if (totalItems > 0 && rows.length <= PAGE_SIZE) {
+      return rows;
+    }
+    // otherwise treat rows as full list and slice for client-side pagination
+    return rows.slice(start, start + PAGE_SIZE);
+  }, [rows, page, totalItems]);
 
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
 
@@ -117,35 +127,7 @@ export default function AgentApprovalTable() {
     };
   }, [page]);
 
-  // 🔹 ব্লক অ্যাকশন (এন্ডপয়েন্ট ঠিক করো)
-  // async function onBlock(row) {
-  //   try {
-  //     const token = Cookies.get("token") || localStorage.getItem("token") || "";
-  //     const res = await fetch(`${API_BASE}/admin/user-list/users/${row.id}`, {
-  //       method: "PATCH",
-  //       // credentials: "include",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  //       },
-  //       body: JSON.stringify({ status: "blocked" }),
-  //     });
-
-  //     if (!res.ok) {
-  //       let msg = `HTTP ${res.status}`;
-  //       try {
-  //         const j = await res.json();
-  //         msg = j?.error || j?.message || msg;
-  //       } catch {}
-  //       throw new Error(msg);
-  //     }
-
-  //     setRows((prev) => prev.filter((r) => r.id !== row.id));
-  //     setTotalItems((t) => Math.max(0, t - 1));
-  //   } catch (e) {
-  //     alert(e.message || "Failed to block");
-  //   }
-  // }
+  
 
   const goPrev = () => setPage((p) => Math.max(1, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
@@ -173,7 +155,7 @@ export default function AgentApprovalTable() {
         </thead>
 
         <tbody className="bg-white">
-          {!loading && userdata.length === 0 && (
+          {!loading && currentRows.length === 0 && (
             <tr>
               <td colSpan={6} className="py-6 text-center text-gray-500">
                 No users found
@@ -181,7 +163,7 @@ export default function AgentApprovalTable() {
             </tr>
           )}
 
-          {userdata.map((r) => {
+          {currentRows.map((r) => {
             const src = r.avatar?.startsWith("/")
               ? r.avatar
               : r.avatar || "/user1.png";

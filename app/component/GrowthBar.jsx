@@ -1,23 +1,75 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
-const data = [
-  { name: 'Jan', uv: 850 },
-  { name: 'Feb', uv: 400 },
-  { name: 'Mar', uv: 700 },
-  { name: 'Apr', uv: 500 },
-  { name: 'May', uv: 700 },
-  { name: 'June', uv: 300 },
-  { name: 'July', uv: 900 },
-  { name: 'Aug', uv: 700 },
-  { name: 'Sep', uv: 300 },
-  { name: 'Oct', uv: 850 },
-  { name: 'Nov', uv: 600 },
-  { name: 'Dec', uv: 700 },
+const months = [
+  "Jan", "Feb", "Mar", "Apr", "May", "June",
+  "July", "Aug", "Sep", "Oct", "Nov", "Dec"
 ];
 
-const GrowthBar = () => {
+const GrowthBar = ({ year = "2025" }) => {
+  const [data, setData] = useState(
+    months.map((m) => ({ name: m, uv: 0 }))
+  );
+
+  useEffect(() => {
+    const fetchUserGrowth = async () => {
+      const token = Cookies.get("token");
+      if (!token) return;
+
+      try {
+        const res = await axios.get("https://ai-car-app-sandy.vercel.app/admin/user-list", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        let usersList = res.data;
+        if (Array.isArray(usersList)) {
+          // OK
+        } else if (usersList?.data) {
+          usersList = usersList.data;
+        } else if (usersList?.users) {
+          usersList = usersList.users;
+        } else {
+          usersList = [];
+        }
+
+        // filter users by year
+        const filtered = usersList.filter(user => {
+          const dateStr = user.createdAt || user.created_at || user.registrationDate;
+          if (!dateStr) return false;
+          const d = new Date(dateStr);
+          return d.getFullYear() === Number(year);
+        });
+
+        // count per month
+        const monthCount = Array(12).fill(0);
+        filtered.forEach(user => {
+          const dateStr = user.createdAt || user.created_at || user.registrationDate;
+          if (!dateStr) return;
+          const d = new Date(dateStr);
+          const monthIndex = d.getMonth(); // 0-11
+          monthCount[monthIndex] += 1;
+        });
+
+        const chartData = months.map((m, idx) => ({
+          name: m,
+          uv: monthCount[idx] || 0
+        }));
+
+        setData(chartData);
+
+      } catch (err) {
+        console.error("GrowthBar fetch error:", err);
+      }
+    };
+
+    fetchUserGrowth();
+  }, [year]);
+
   return (
     <ResponsiveContainer width="100%" height={250} style={{ border: 'none' }}>
       <BarChart
@@ -31,8 +83,8 @@ const GrowthBar = () => {
           bottom: 0,
         }}
       >
-        
-        <XAxis dataKey="name"
+        <XAxis
+          dataKey="name"
           axisLine={false}
           tickLine={false}
           padding={{ left: 9, right: 0 }}
@@ -42,8 +94,8 @@ const GrowthBar = () => {
             fontFamily: 'poppins'
           }}
         />
-        <YAxis domain={[0, 1000]}
-          ticks={[0, 200, 400, 600, 800, 1000]}
+        <YAxis
+          domain={[0, Math.max(...data.map(d => d.uv)) + 5]}
           axisLine={false}
           tickLine={false}
           tick={{
@@ -55,18 +107,14 @@ const GrowthBar = () => {
         <Tooltip />
         <Bar
           dataKey="uv"
-          fill="#FFC42D"
           barSize={12}
-          fillOpacity={1}
           radius={[8, 8, 0, 0]}
         >
           {data.map((entry, index) => (
             <Cell
               key={`cell-${index}`}
-              fill={index % 2 === 0 ? "#FFC42D" : "#FFC42D"}
-              fillOpacity={index % 2 === 0 ? 1 : 0.6}
-              
-
+              fill="#FFC42D"
+              fillOpacity={1}
             />
           ))}
         </Bar>
