@@ -136,10 +136,10 @@ export default function LoginPage() {
           {loading ? "Signing in..." : "Sign In"}
         </button>
 
-        <p className="font-inter text-center mt-5">
+        {/* <p className="font-inter text-center mt-5">
           Not registered?{" "}
           <a href="/register" className="text-[#333333] hover:text-[#015093] font-inter text-[16px] hover:underline">Register</a>
-        </p>
+        </p> */}
       </form>
     </main>
   );

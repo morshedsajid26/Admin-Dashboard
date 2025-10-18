@@ -52,8 +52,7 @@ const normalizeUser = (u, idx) => {
     "/user-placeholder.png";
   const date =
     u.createdAt || u.created_at || u.submittedAt || u.registrationDate || u.date || "";
-  const status = u.status || u.verificationStatus || "pending";
-  // use last 4 chars like your agent approval page
+  const status = (u.status || u.verificationStatus || "pending").toString();
   const sl = u.sl || `#${String(id).slice(-4)}`;
   return { id, sl, name, avatar, date, status, raw: u };
 };
@@ -160,22 +159,8 @@ export default function Page() {
 
         const arr = Array.isArray(list) ? list : [];
 
-        // pick latest 4 (based on createdAt if present)
-        let last4 = [];
-        if (arr.length <= 4) {
-          last4 = arr;
-        } else {
-          const hasCreatedAt = arr.every((i) => i && (i.createdAt || i.created_at));
-          if (hasCreatedAt) {
-            last4 = [...arr]
-              .sort((a, b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at))
-              .slice(0, 4);
-          } else {
-            last4 = arr.slice(0, 4);
-          }
-        }
-
-        const normalized = last4.map((u, idx) => normalizeUser(u, idx));
+        // Normalize and store all (we'll filter pending later for display)
+        const normalized = arr.map((u, idx) => normalizeUser(u, idx));
         if (mounted) setVerificationUsers(normalized);
       } catch (err) {
         console.error("fetchVerificationUsers error:", err);
@@ -301,7 +286,26 @@ export default function Page() {
     }
   }
 
-  const rowsToShow = verificationUsers;
+  // ---------- NEW: rowsToShow = last 4 items which are pending ----------
+  const pendingItems = verificationUsers.filter((u) => {
+    // prefer normalized status, but also check raw fields
+    const st = (u.status || u.raw?.status || u.raw?.verificationStatus || "").toString().toLowerCase();
+    return st === "pending" || st === "pending_review" || st === "awaiting";
+  });
+
+  const rowsToShow = (() => {
+    if (!pendingItems || pendingItems.length === 0) return [];
+    // if createdAt exists on raw data, sort by that desc
+    const hasCreated = pendingItems.every((i) => i.raw && (i.raw.createdAt || i.raw.created_at));
+    if (hasCreated) {
+      return [...pendingItems]
+        .sort((a, b) => new Date(b.raw.createdAt || b.raw.created_at) - new Date(a.raw.createdAt || a.raw.created_at))
+        .slice(0, 4);
+    }
+    // fallback: take first 4 (assuming API returned newest-first)
+    return pendingItems.slice(0, 4);
+  })();
+  // --------------------------------------------------------------------
 
   return (
     <div>
@@ -380,7 +384,7 @@ export default function Page() {
             <tbody className="bg-white">
               {rowsToShow.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-6 text-center text-gray-500">No verification items found.</td>
+                  <td colSpan={5} className="py-6 text-center font-inter text-[16px] text-[#333333]">No pending verification items found.</td>
                 </tr>
               ) : rowsToShow.map((r, idx) => {
                 const name = r.name || "Unknown";
@@ -390,13 +394,12 @@ export default function Page() {
                 const sl = r.sl || `#${idx + 1}`;
                 const avatarSrc = r.avatar ;
 
-
                 return (
                   <tr key={r.id || idx} className="align-middle">
                     <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] whitespace-nowrap">{sl}</td>
                     <td className="py-4 pr-4">
                       <div className="flex items-center gap-3">
-                        <Avatar src={avatarSrc} alt=''size={36} />
+                        <Avatar src={avatarSrc} alt='avatar' size={36} />
                         <span className="text-[#333333] font-inter text-[16px]">{name}</span>
                       </div>
                     </td>
