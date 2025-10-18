@@ -15,7 +15,6 @@ let Title =({headerText})=>{
 <h3 className='text-[#333333] text-[20px] font-inter font-semibold capitalize' >{headerText}</h3>
 </div>
 
-
 )}
  
 const Header = ({}) => {

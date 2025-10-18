@@ -1,29 +1,9 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward, IoMdArrowBack } from "react-icons/io";
-import { usePathname } from "next/navigation";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { useRouter } from 'next/navigation';
-
-
-const NOTIFICATIONS = [
-  { title:"New Agent Verification Request-", details:"Priya Hasan submitted documents for agent verification. Review now in Verification Center.", time:"Just Now"},
-  { title:"Subscription Expiry Alert –", details:"Nova Developers' Enterprise subscription expires in 3 days. Send renewal reminder?", time:"5 min ago"},
-  { title:"New Property Added –", details:" New property listed by Shafiq Rahman in Gulshan. Status: Pending Review.", time:"30 min ago"},
-  { title:"Agent Profile Rejected (Appeal) – ", details:"Nabila Khan submitted an appeal after verification rejection. Review updated documents.", time:"1 hour ago"},
-  { title:"Agent Profile Rejected (Appeal) – ", details:"Nabila Khan submitted an appeal after verification rejection. Review updated documents.", time:"1 hour ago"},
-  { title:"New Agent Verification Request-", details:"Priya Hasan submitted documents for agent verification. Review now in Verification Center.", time:"Just Now"},
-  { title:"Subscription Expiry Alert –", details:"Nova Developers' Enterprise subscription expires in 3 days. Send renewal reminder?", time:"5 min ago"},
-  { title:"New Property Added –", details:" New property listed by Shafiq Rahman in Gulshan. Status: Pending Review.", time:"30 min ago"},
-  { title:"Agent Profile Rejected (Appeal) – ", details:"Nabila Khan submitted an appeal after verification rejection. Review updated documents.", time:"1 hour ago"},
-  { title:"Agent Profile Rejected (Appeal) – ", details:"Nabila Khan submitted an appeal after verification rejection. Review updated documents.", time:"1 hour ago"},
-  { title:"Agent Profile Rejected (Appeal) – ", details:"Nabila Khan submitted an appeal after verification rejection. Review updated documents.", time:"1 hour ago"},
-  { title:"New Agent Verification Request-", details:"Priya Hasan submitted documents for agent verification. Review now in Verification Center.", time:"Just Now"},
-  { title:"Subscription Expiry Alert –", details:"Nova Developers' Enterprise subscription expires in 3 days. Send renewal reminder?", time:"5 min ago"},
-  { title:"New Property Added –", details:" New property listed by Shafiq Rahman in Gulshan. Status: Pending Review.", time:"30 min ago"},
-  { title:"Agent Profile Rejected (Appeal) – ", details:"Nabila Khan submitted an appeal after verification rejection. Review updated documents.", time:"1 hour ago"},
-  { title:"Agent Profile Rejected (Appeal) – ", details:"Nabila Khan submitted an appeal after verification rejection. Review updated documents.", time:"1 hour ago"},
-];
+import { usePathname, useRouter } from "next/navigation";
+import Pusher from "pusher-js";
 
 const PAGE_SIZE = 10;
 
@@ -33,21 +13,25 @@ export default function NotificationsPage() {
   const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [notifications, setNotifications] = useState([]);
 
-  const totalItems = NOTIFICATIONS.length;
+  // Helpful debug flags — no UI change
+  const PUSHER_KEY = process.env.NEXT_PUBLIC_PUSHER_KEY || "";
+  const PUSHER_CLUSTER = process.env.NEXT_PUBLIC_PUSHER_CLUSTER || "";
+
+  // Pagination calculations
+  const totalItems = notifications.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
-
   const startIdx = (currentPage - 1) * PAGE_SIZE;
 
-  
+  // slice visible items for current page
   const pageItems = useMemo(() => {
-    return NOTIFICATIONS.slice(startIdx, startIdx + PAGE_SIZE).map((n, i) => ({
+    return notifications.slice(startIdx, startIdx + PAGE_SIZE).map((n, i) => ({
       ...n,
-      id: startIdx + i, 
+      __localIdx: startIdx + i,
     }));
-  }, [startIdx]);
+  }, [startIdx, notifications]);
 
-  
   const pageList = useMemo(() => {
     if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
     const out = [];
@@ -64,29 +48,100 @@ export default function NotificationsPage() {
   const goPrev = () => setCurrentPage((p) => Math.max(1, p - 1));
   const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
- 
+  // helper: normalize incoming payload so UI can read it
+  function normalizePayload(data) {
+    // backend may send different field names; we normalize to { id, title, details, time }
+    const id = data.id || data._id || data.notificationId || data.notification_id || `notif-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+    const title = data.title || data.t || data.heading || "Notification";
+    const details = data.details || data.body || data.message || data.desc || "";
+    const time = data.time || data.createdAt || data.timestamp || new Date().toLocaleString();
+    return { id, title, details, time };
+  }
 
+  // Setup Pusher subscription once (client-side)
+  useEffect(() => {
+    if (!PUSHER_KEY || !PUSHER_CLUSTER) {
+      console.warn("Pusher key/cluster not set. Set NEXT_PUBLIC_PUSHER_KEY and NEXT_PUBLIC_PUSHER_CLUSTER in your .env");
+      return;
+    }
+
+    console.log("Pusher: connecting (key, cluster):", PUSHER_KEY, PUSHER_CLUSTER);
+
+    const pusher = new Pusher(PUSHER_KEY, {
+      cluster: PUSHER_CLUSTER,
+      // enable logs in the browser console (helps debug)
+      // note: Pusher automatically logs some info; we also bind to connection events
+    });
+
+    pusher.connection.bind("connected", () => {
+      console.log("Pusher connected. socket_id:", pusher.connection.socket_id);
+    });
+
+    pusher.connection.bind("error", (err) => {
+      console.error("Pusher connection error:", err);
+    });
+
+    const CHANNEL = "notifications";         // <-- must match backend
+    const EVENT = "new-notification";       // <-- must match backend
+
+    const channel = pusher.subscribe(CHANNEL);
+
+    channel.bind(EVENT, (rawData) => {
+      try {
+        console.log("Pusher event received:", rawData);
+        const item = normalizePayload(rawData);
+        // prepend new notifications (newest first)
+        setNotifications((prev) => [item, ...prev]);
+        // ensure user sees newest page
+        setCurrentPage(1);
+      } catch (e) {
+        console.error("Failed to handle notification payload:", e);
+      }
+    });
+
+    // Optional: also listen to subscription_succeeded to confirm subscription
+    channel.bind("pusher:subscription_succeeded", () => {
+      console.log(`Subscribed to channel: ${CHANNEL}`);
+    });
+
+    return () => {
+      try {
+        channel.unbind_all();
+        pusher.unsubscribe(CHANNEL);
+        pusher.disconnect();
+      } catch (e) {
+        // ignore cleanup errors
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // run once on mount
+
+  // delete handler (works with normalized id or local idx)
+  function handleDelete(idOrLocal) {
+    setNotifications((prev) => prev.filter((n) => n.id !== idOrLocal && n.__localIdx !== idOrLocal));
+  }
+ console.log("notifications", notifications)
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
-      
+      {/* Header */}
       <div className="flex items-center gap-[14px]">
         <IoMdArrowBack onClick={() => router.back()} className="w-6 h-6 text-[#015093]" />
         <h3 className="text-[#333333] text-[20px] font-inter font-semibold capitalize">
-          {pathParts[0] || ""}
+          {pathParts[0] || "Notifications"}
         </h3>
       </div>
 
-      
+      {/* Total Notifications */}
       <div>
         <p className="text-[#333333] text-[16px] font-inter font-semibold mt-[21px]">
           Total {totalItems} Notifications
         </p>
       </div>
 
-      
+      {/* Notification List */}
       <div className="mt-6">
         {pageItems.map((item) => (
-          <div key={item.id} className="w-full hover:bg-[#CCDCE9] transition-all duration-300 py-3 px-[25px]">
+          <div key={item.id || item.__localIdx} className="w-full hover:bg-[#CCDCE9] transition-all duration-300 py-3 px-[25px]">
             <div className="flex justify-between items-center gap-4">
               <p className="min-w-[1000px] text-[#333333] text-[16px] font-inter font-semibold">
                 {item.title} <span className="font-normal">{item.details}</span>
@@ -94,15 +149,18 @@ export default function NotificationsPage() {
               <p className="text-[#5C5C5C] text-[16px] font-inter whitespace-nowrap">{item.time}</p>
               <RiDeleteBin6Line
                 className="w-6 h-6 text-[#DC4600] cursor-pointer"
-                // onClick={() => handleDelete(item.id)}
                 title="Delete"
+                onClick={() => handleDelete(item.id || item.__localIdx)}
               />
             </div>
           </div>
         ))}
+        {pageItems.length === 0 && (
+          <div className="py-6 text-center text-gray-500">No notifications</div>
+        )}
       </div>
 
-     
+      {/* Pagination */}
       <div className="mt-20 flex justify-center">
         <nav className="inline-flex items-center gap-4" aria-label="Pagination">
           <button

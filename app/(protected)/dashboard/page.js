@@ -97,6 +97,8 @@ export default function Page() {
   const [yearIncome, setYearIncome] = useState(false);
   const [yearGrowth, setYearGrowth] = useState(false);
   const [yearValue, setYearValue] = useState("2025");
+  const [yearValue2, setYearValue2] = useState("2025");
+  
   const [carCount, setCarCount] = useState(0);
   const [busyRow, setBusyRow] = useState({}); // { [id]: "approve"|"reject" }
 
@@ -345,17 +347,17 @@ export default function Page() {
             <h3 className="font-inter font-semibold text-[18px] text-[#333333]">User Growth</h3>
             <div className="relative cursor-pointer">
               <div onClick={() => setYearGrowth(!yearGrowth)}>
-                <input readOnly className="outline-none w-[75px] border border-[#767676] py-[6px] pl-2.5 pr-1 rounded-[5px] font-inter text-[14px] text-[#333333]" placeholder={yearValue} />
+                <input readOnly className="outline-none w-[75px] border border-[#767676] py-[6px] pl-2.5 pr-1 rounded-[5px] font-inter text-[14px] text-[#333333]" placeholder={yearValue2} />
                 {yearGrowth ? <IoIosArrowDown className="absolute top-1/2 right-0 -translate-y-1/2 w-6 h-6 rotate-180" /> : <IoIosArrowDown className="absolute top-1/2 right-0 -translate-y-1/2 w-6 h-6" />}
                 <div className={`w-full text-center bg-white font-inter text-[14px] text-[#333333] z-30 absolute ${yearGrowth ? "opacity-100 h-auto visible overflow-auto" : "opacity-0 h-0 invisible overflow-hidden"}`}>
                   {years.map((item) => (
-                    <div key={item} onClick={() => { setYearValue(item); setYearGrowth(false); }} className="py-2 hover:bg-[#015093] hover:text-white cursor-pointer">{item}</div>
+                    <div key={item} onClick={() => { setYearValue2(item); setYearGrowth(false); }} className="py-2 hover:bg-[#015093] hover:text-white cursor-pointer">{item}</div>
                   ))}
                 </div>
               </div>
             </div>
           </div>
-          <div><GrowthBar year={yearValue} /></div>
+          <div><GrowthBar year={yearValue2} /></div>
         </div>
 
         <div className="col-span-12 bg-white rounded-[5px] py-[25px] px-[22px]">
@@ -370,7 +372,7 @@ export default function Page() {
                 <th className="py-3 pr-4 w-[10%]">SL No</th>
                 <th className="py-3 pr-4 w-[25%]">Agent Name</th>
                 <th className="py-3 pr-4 w-[20%]">Submission Date</th>
-                <th className="py-3 pr-4 w-[15%] text-center">Action</th>
+                <th className="py-3 pr-4 w-[15.4%] text-center">Action</th>
                 <th className="py-3 pr-2 w-[30%] text-center">Details</th>
               </tr>
             </thead>
