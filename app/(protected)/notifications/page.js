@@ -4,16 +4,19 @@ import { IoIosArrowBack, IoIosArrowForward, IoMdArrowBack } from "react-icons/io
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { usePathname, useRouter } from "next/navigation";
 import Pusher from "pusher-js";
+import { useNotifications } from "@/app/SimpleProvider";
 
 const PAGE_SIZE = 10;
 
 export default function NotificationsPage() {
+const { unreadCount, notifications } = useNotifications();
+
   const pathname = usePathname();
   const pathParts = (pathname || "/").split("/").filter(Boolean);
   const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [notifications, setNotifications] = useState([]);
+  // const [notification, setNotification] = useState([]);
 
   // Helpful debug flags — no UI change
   const PUSHER_KEY = process.env.NEXT_PUBLIC_PUSHER_KEY || "";
@@ -49,14 +52,13 @@ export default function NotificationsPage() {
   const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
   // helper: normalize incoming payload so UI can read it
-  function normalizePayload(data) {
-    // backend may send different field names; we normalize to { id, title, details, time }
-    const id = data.id || data._id || data.notificationId || data.notification_id || `notif-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
-    const title = data.title || data.t || data.heading || "Notification";
-    const details = data.details || data.body || data.message || data.desc || "";
-    const time = data.time || data.createdAt || data.timestamp || new Date().toLocaleString();
-    return { id, title, details, time };
-  }
+function normalizePayload(data) {
+  const id = data.id || data._id || data.notificationId || data.notification_id || `notif-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+  const title = data.title || data.t || data.heading || "Notification";
+  const details = data.details || data.body || data.message || data.desc || "";
+  const time = data.time || data.createdAt || data.timestamp || new Date().toISOString(); // ISO for safe parsing
+  return { id, title, details, time };
+}
 
   // Setup Pusher subscription once (client-side)
   useEffect(() => {
@@ -118,9 +120,24 @@ export default function NotificationsPage() {
 
   // delete handler (works with normalized id or local idx)
   function handleDelete(idOrLocal) {
-    setNotifications((prev) => prev.filter((n) => n.id !== idOrLocal && n.__localIdx !== idOrLocal));
+    setNotification((prev) => prev.filter((n) => n.id !== idOrLocal && n.__localIdx !== idOrLocal));
   }
- console.log("notifications", notifications)
+ 
+
+ function timeAgo(timestamp) {
+  const now = new Date();
+  const then = new Date(timestamp);
+  const diffMs = now - then; // milliseconds difference
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHour = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHour / 24);
+
+  if (diffMin < 1) return "Just now";
+  if (diffMin < 60) return `${diffMin} minute${diffMin === 1 ? "" : "s"} ago`;
+  if (diffHour < 24) return `${diffHour} hour${diffHour === 1 ? "" : "s"} ago`;
+  return `${diffDay} day${diffDay === 1 ? "" : "s"} ago`;
+}
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
       {/* Header */}
@@ -142,16 +159,19 @@ export default function NotificationsPage() {
       <div className="mt-6">
         {pageItems.map((item) => (
           <div key={item.id || item.__localIdx} className="w-full hover:bg-[#CCDCE9] transition-all duration-300 py-3 px-[25px]">
-            <div className="flex justify-between items-center gap-4">
-              <p className="min-w-[1000px] text-[#333333] text-[16px] font-inter font-semibold">
-                {item.title} <span className="font-normal">{item.details}</span>
+            <div className=" w-full flex items-center gap-4">
+              <p className="w-[80%]  text-[#333333] text-[16px] font-inter font-semibold">
+                {item.message} <span className="font-normal">{item.details}</span>
               </p>
-              <p className="text-[#5C5C5C] text-[16px] font-inter whitespace-nowrap">{item.time}</p>
-              <RiDeleteBin6Line
+              <p className="w-[10%]  flex justify-end  text-[#5C5C5C] text-[16px] font-inter whitespace-nowrap">{timeAgo(item.time || item.createdAt)}</p>
+
+              <div className="w-[10%]   flex justify-end">
+                <RiDeleteBin6Line
                 className="w-6 h-6 text-[#DC4600] cursor-pointer"
                 title="Delete"
                 onClick={() => handleDelete(item.id || item.__localIdx)}
               />
+              </div>
             </div>
           </div>
         ))}

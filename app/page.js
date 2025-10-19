@@ -140,6 +140,7 @@ export default function LoginPage() {
           Not registered?{" "}
           <a href="/register" className="text-[#333333] hover:text-[#015093] font-inter text-[16px] hover:underline">Register</a>
         </p> */}
+        
       </form>
     </main>
   );

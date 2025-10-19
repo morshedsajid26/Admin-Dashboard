@@ -6,7 +6,7 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://ai-car-app-sandy.vercel.app";
-const REGISTER_URL = `${API_BASE}/register`; 
+const REGISTER_URL = `${API_BASE}/admin/create-user`; 
 
 export default function RegisterPage() {
   const router = useRouter();

@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono, Inter, Poppins,Noto_Serif } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import { SimpleProvider } from "./SimpleProvider";
 
 
 
@@ -40,12 +41,16 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+   const adminId = "68e74d59a27c952840fb04ac";
   return (
     <html lang="en" >
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${poppins.variable} ${noto.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <SimpleProvider adminId={adminId}>
+          <Providers>{children}</Providers>
+        </SimpleProvider>
+        
       </body>
     </html>
   );
