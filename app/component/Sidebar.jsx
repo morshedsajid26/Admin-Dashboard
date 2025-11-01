@@ -97,10 +97,10 @@ const Sidebar = ({className}) => {
               variant='child'
                 
                 />
-                <Li liText='Reports'
+                {/* <Li liText='Reports'
                 href='/reports'
                 variant='child'
-                />
+                /> */}
                 
                
               </ul>

@@ -1,67 +1,134 @@
 "use client";
-import React, { useState } from 'react'
-import { IoMdArrowBack } from 'react-icons/io'
-import { usePathname, useRouter } from 'next/navigation';
-import Image from 'next/image';
-import profile from '@/public/profile.png'
-import { MdOutlineCameraAlt } from 'react-icons/md';
-import Link from 'next/link';
+import React, { useEffect, useState } from "react";
+import { IoMdArrowBack } from "react-icons/io";
+import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import { MdOutlineCameraAlt } from "react-icons/md";
+import Link from "next/link";
+import profile from "@/public/profile.png"; // default image
 
 const tabs = [
   { href: "/profile", label: "Edit Profile" },
   { href: "/profile/changepass", label: "Change Password" },
 ];
 
-const Page = ({children}) => {
-  const pathname = usePathname(); 
-  const pathParts = pathname.split("/").filter(Boolean);
+const Page = ({ children }) => {
+  const pathname = usePathname();
   const router = useRouter();
-  const [profileImage, setProfileImage] = useState(profile); 
-  const [imageInput, setImageInput] = useState(null);
-  
-  
+  const pathParts = pathname.split("/").filter(Boolean);
 
+  const [profileData, setProfileData] = useState({
+    name: "",
+    image: profile,
+  });
+  const [loading, setLoading] = useState(true);
+
+  // 🔹 Load saved image & Fetch name from API
+  useEffect(() => {
+    const savedImage = localStorage.getItem("profileImage");
+    if (savedImage) {
+      setProfileData((prev) => ({
+        ...prev,
+        image: savedImage,
+      }));
+    }
+
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.warn("No token found in localStorage!");
+          setLoading(false);
+          return;
+        }
+
+        const res = await fetch("https://ai-car-app-sandy.vercel.app/admin/profile", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        console.log("Profile API Response:", data);
+
+        if (res.ok && data && (data.name || data.user?.name)) {
+          setProfileData((prev) => ({
+            ...prev,
+            name: data.name || data.user?.name || "",
+          }));
+        } else {
+          console.error("Unexpected API response format:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // 🔹 Handle image change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result); 
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const newImage = reader.result;
+      setProfileData((prev) => ({ ...prev, image: newImage }));
+      localStorage.setItem("profileImage", newImage);
+    };
+    reader.readAsDataURL(file);
   };
-
-
-
 
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
-      <div className='flex items-center gap-[14px]'>
-        <IoMdArrowBack onClick={() => router.back()} className='w-6 h-6 text-[#015093]' />
-        <h3 className='text-[#333333] text-[20px] font-inter font-semibold capitalize' >{pathParts[0] || ""}</h3>
+      <div className="flex items-center gap-[14px]">
+        <IoMdArrowBack
+          onClick={() => router.back()}
+          className="w-6 h-6 text-[#015093] cursor-pointer"
+        />
+        <h3 className="text-[#333333] text-[20px] font-inter font-semibold capitalize">
+          {pathParts[0] || ""}
+        </h3>
       </div>
 
-      <div className=' w-[254px] flex flex-col items-center mx-auto'>
-        <div className='image relative'>
-          <Image src={profileImage} alt='profile' width={150} height={150} className="rounded-full" />
-          <div className='w-[30px] h-[30px] flex items-center justify-center bg-[#FEFEFE] rounded-full absolute bottom-0 right-0'>
-            <input 
-              type="file" 
-              id="fileInput" 
+      <div className="w-[254px] flex flex-col items-center mx-auto">
+        {/* 🔹 Profile Image */}
+        <div className="relative">
+          <Image
+            src={profileData.image}
+            alt="profile"
+            width={150}
+            height={150}
+            className="rounded-full object-cover"
+          />
+          <div className="w-[30px] h-[30px] flex items-center justify-center bg-[#FEFEFE] rounded-full absolute bottom-0 right-0">
+            <input
+              type="file"
+              id="fileInput"
               className="hidden"
               accept="image/*"
               onChange={handleImageChange}
             />
-            <MdOutlineCameraAlt 
-              className='w-6 h-6 rounded-full py-[3.5px] px-[2.5px] bg-[#015093] text-white cursor-pointer' 
-              onClick={() => document.getElementById('fileInput').click()} 
+            <MdOutlineCameraAlt
+              className="w-6 h-6 rounded-full py-[3.5px] px-[2.5px] bg-[#015093] text-white cursor-pointer"
+              onClick={() => document.getElementById("fileInput").click()}
             />
           </div>
         </div>
-        <p className=' text-[30px] font-medium font-inter text-[#333333] mt-4 mb-6'>Mr. Admin</p>
 
-        <div className='flex justify-between gap-[30px]'>
+        {/* 🔹 Name Display */}
+        <p className="text-[20px] font-medium font-inter text-[#333333] mt-4 mb-6">
+          {loading ? "Loading..." : profileData.name || "No name found"}
+        </p>
+
+        {/* 🔹 Tabs */}
+        <div className="flex justify-between gap-[30px]">
           {tabs.map((t) => {
             const isActive = pathname === t.href;
             return (
@@ -80,10 +147,10 @@ const Page = ({children}) => {
           })}
         </div>
       </div>
-      
+
       {children}
     </div>
-  )
-}
+  );
+};
 
 export default Page;
