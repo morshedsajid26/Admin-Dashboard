@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdOutlineCameraAlt } from "react-icons/md";
 import Link from "next/link";
-import profile from "@/public/profile.png"; // default image
+
 
 const tabs = [
   { href: "/profile", label: "Edit Profile" },
@@ -19,7 +19,7 @@ const Page = ({ children }) => {
 
   const [profileData, setProfileData] = useState({
     name: "",
-    image: profile,
+    image: "",
     userId: "",
   });
   const [loading, setLoading] = useState(true);
