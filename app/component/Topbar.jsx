@@ -14,26 +14,21 @@ const Topbar = () => {
     image: userPlaceholder,
   });
 
-  // 🧠 Fetch name from backend & image from localStorage
   useEffect(() => {
-    const savedImage = localStorage.getItem("profileImage");
     const token = localStorage.getItem("token");
+    const savedImage = localStorage.getItem("profileImage");
 
-    // 🔹 Set saved image (if exists)
+    // ✅ Set saved image if found
     if (savedImage) {
       setUserData((prev) => ({ ...prev, image: savedImage }));
     }
 
-    // 🔹 Fetch user name from API
+    // ✅ Fetch user name from backend
     const fetchProfile = async () => {
-      if (!token) {
-        console.warn("No token found in localStorage!");
-        return;
-      }
+      if (!token) return console.warn("No token found!");
 
       try {
         const res = await fetch("https://ai-car-app-sandy.vercel.app/admin/profile", {
-          method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -43,36 +38,39 @@ const Topbar = () => {
         const data = await res.json();
         console.log("Topbar Profile API Response:", data);
 
-        // 🔹 Flexible handling based on possible API structures
         const userName =
           data?.name ||
           data?.user?.name ||
           data?.admin?.name ||
           data?.data?.name ||
-          "";
+          "User";
 
-        if (res.ok && userName) {
+        if (res.ok) {
           setUserData((prev) => ({ ...prev, name: userName }));
-        } else {
-          console.warn("Failed to extract name from response:", data);
         }
       } catch (err) {
-        console.error("Error fetching profile in Topbar:", err);
+        console.error("Error fetching profile:", err);
       }
     };
 
     fetchProfile();
 
-    // 🔁 Listen for image change event (from profile page)
-    const handleStorageChange = () => {
-      const updatedImage = localStorage.getItem("profileImage");
-      if (updatedImage) {
-        setUserData((prev) => ({ ...prev, image: updatedImage }));
+    // ✅ Listen for profile image updates from localStorage or custom event
+    const updateImage = () => {
+      const newImage = localStorage.getItem("profileImage");
+      if (newImage) {
+        setUserData((prev) => ({ ...prev, image: newImage }));
       }
     };
 
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    // listen to both localStorage + custom event
+    window.addEventListener("storage", updateImage);
+    window.addEventListener("profileImageUpdated", updateImage);
+
+    return () => {
+      window.removeEventListener("storage", updateImage);
+      window.removeEventListener("profileImageUpdated", updateImage);
+    };
   }, []);
 
   return (
@@ -91,7 +89,7 @@ const Topbar = () => {
         {/* 👤 Profile Image + Name */}
         <Link href="/profile" className="flex items-center gap-3">
           <Image
-            src={userData.image}
+            src={userData.image || userPlaceholder}
             alt="user"
             width={42}
             height={42}

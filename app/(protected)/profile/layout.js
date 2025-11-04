@@ -20,19 +20,12 @@ const Page = ({ children }) => {
   const [profileData, setProfileData] = useState({
     name: "",
     image: profile,
+    userId: "",
   });
   const [loading, setLoading] = useState(true);
 
   // 🔹 Load saved image & Fetch name from API
   useEffect(() => {
-    const savedImage = localStorage.getItem("profileImage");
-    if (savedImage) {
-      setProfileData((prev) => ({
-        ...prev,
-        image: savedImage,
-      }));
-    }
-
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -53,13 +46,25 @@ const Page = ({ children }) => {
         const data = await res.json();
         console.log("Profile API Response:", data);
 
-        if (res.ok && data && (data.name || data.user?.name)) {
-          setProfileData((prev) => ({
-            ...prev,
-            name: data.name || data.user?.name || "",
-          }));
+        if (res.ok && data) {
+          const userId =
+            data._id ||
+            data.user?._id ||
+            data.user?.id ||
+            data.user?.email ||
+            "guest";
+
+          localStorage.setItem("currentUserId", userId);
+
+          const savedImage = localStorage.getItem(`profileImage_${userId}`);
+
+          setProfileData({
+            name: data.name || data.user?.name || "No name found",
+            image: savedImage || profile,
+            userId,
+          });
         } else {
-          console.error("Unexpected API response format:", data);
+          console.error("Unexpected API response:", data);
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -74,13 +79,19 @@ const Page = ({ children }) => {
   // 🔹 Handle image change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file || !profileData.userId) return;
 
     const reader = new FileReader();
     reader.onloadend = () => {
       const newImage = reader.result;
       setProfileData((prev) => ({ ...prev, image: newImage }));
-      localStorage.setItem("profileImage", newImage);
+
+      // ✅ Save image for this specific user
+      localStorage.setItem(`profileImage_${profileData.userId}`, newImage);
+      localStorage.setItem("profileImage", newImage); // for backward compatibility
+
+      // ✅ Trigger event so Topbar updates instantly
+      window.dispatchEvent(new Event("profileImageUpdated"));
     };
     reader.readAsDataURL(file);
   };

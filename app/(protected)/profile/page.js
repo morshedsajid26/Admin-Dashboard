@@ -11,7 +11,7 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Fetch user data on mount
+  // 🔹 Fetch user profile when page loads
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
@@ -22,36 +22,38 @@ const Page = () => {
 
       try {
         const res = await fetch("https://ai-car-app-sandy.vercel.app/admin/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await res.json();
-        console.log("Profile API response:", data); // 👈 দেখার জন্য
 
-        if (res.ok) {
-          const user = data.user || {};
+        const data = await res.json();
+        console.log("Profile API Response:", data);
+
+        if (res.ok && data.user) {
+          const user = data.user;
           setFormData({
             name: user.name || "",
             email: user.email || "",
-            contact: user.contact || "",
+            contact: user.contact || user.phone ||  "",
             address: user.address || "",
           });
         } else {
-          setMessage("❌ Failed to load profile");
+          setMessage("❌ Failed to load profile.");
         }
-      } catch {
-        setMessage("⚠️ Network error while loading profile");
+      } catch (error) {
+        console.error("Error loading profile:", error);
+        setMessage("⚠️ Network error while loading profile.");
       }
     };
 
     fetchProfile();
   }, []);
 
+  // 🔹 Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // 🔹 Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -71,17 +73,19 @@ const Page = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), // ✅ send all fields
       });
 
       const result = await response.json();
+      console.log("Edit Profile Response:", result);
 
       if (response.ok) {
         setMessage("✅ Profile updated successfully!");
       } else {
-        setMessage(`❌ ${result.message || "Failed to update profile"}`);
+        setMessage(`❌ ${result.message || "Failed to update profile."}`);
       }
-    } catch {
+    } catch (error) {
+      console.error("Error updating profile:", error);
       setMessage("⚠️ Network error. Please try again.");
     } finally {
       setLoading(false);
@@ -95,7 +99,10 @@ const Page = () => {
       <form onSubmit={handleSubmit} className="w-full mt-6">
         {["name", "email", "contact", "address"].map((field) => (
           <div key={field} className="mt-4">
-            <label className="text-[#333333] text-[16px] font-inter capitalize" htmlFor={field}>
+            <label
+              className="text-[#333333] text-[16px] font-inter capitalize"
+              htmlFor={field}
+            >
               {field === "contact" ? "Contact No" : field}
             </label>
             <input

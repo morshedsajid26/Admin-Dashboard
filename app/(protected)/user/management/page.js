@@ -106,7 +106,7 @@ export default function AgentApprovalTable() {
           email: u.email || "unknown@example.com",
           mobile: u.phone || u.mobile || "",
           date: u.createdAt ? fmtDate(u.createdAt) : u.date || "",
-          avatar: u.avatar || u.photoUrl || u.avatarUrl || "/user1.png",
+          avatar: u.avatar || u.photoUrl || u.avatarUrl || u.image ,
         }));
 
         if (!off) {
@@ -166,7 +166,7 @@ export default function AgentApprovalTable() {
           {currentRows.map((r) => {
             const src = r.avatar?.startsWith("/")
               ? r.avatar
-              : r.avatar || "/user1.png";
+              : r.avatar || "/";
             return (
               <tr key={r.id || r.sl} className="align-middle">
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] whitespace-nowrap">
@@ -217,7 +217,7 @@ export default function AgentApprovalTable() {
         </tbody>
       </table>
 
-      {/* Pagination UI — ঠিক আগের মতো */}
+     
       <div className="mt-6 flex justify-center">
         <nav className="inline-flex items-center gap-4" aria-label="Pagination">
           <button
