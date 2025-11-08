@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
+import Link from "next/link";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://admin-dashboard.drivestai.com";
 const REGISTER_URL = `${API_BASE}/admin/create-user`; 
@@ -130,12 +131,12 @@ export default function RegisterPage() {
         <div>
           <p className="font-inter text-center mt-5">
             Already have an account?{" "}
-            <a
+            <Link
               href="/"
               className="text-[#333333] hover:text-[#015093] font-inter text-[16px] hover:underline"
             >
               Sign In
-            </a>
+            </Link>
           </p>
         </div>
       </form>
