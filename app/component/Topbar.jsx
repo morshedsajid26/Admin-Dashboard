@@ -16,19 +16,22 @@ const Topbar = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const savedImage = localStorage.getItem("profileImage");
+    const userId = localStorage.getItem("currentUserId");
 
-    // ✅ Set saved image if found
-    if (savedImage) {
-      setUserData((prev) => ({ ...prev, image: savedImage }));
+    // ✅ Load saved profile image (if exists)
+    if (userId) {
+      const savedImg = localStorage.getItem(`profileImage_${userId}`);
+      if (savedImg) {
+        setUserData((prev) => ({ ...prev, image: savedImg }));
+      }
     }
 
-    // ✅ Fetch user name from backend
+    // ✅ Fetch profile data
     const fetchProfile = async () => {
-      if (!token) return console.warn("No token found!");
+      if (!token) return;
 
       try {
-        const res = await fetch("https://ai-car-app-sandy.vercel.app/admin/profile", {
+        const res = await fetch("https://admin-dashboard.drivestai.com/admin/profile", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -36,41 +39,37 @@ const Topbar = () => {
         });
 
         const data = await res.json();
-        console.log("Topbar Profile API Response:", data);
+        console.log("Topbar Profile Response:", data);
 
+        // ✅ Extract name safely (supports all backend structures)
         const userName =
-          data?.name ||
-          data?.user?.name ||
-          data?.admin?.name ||
+          data?.data?.admin?.name ||
           data?.data?.name ||
+          data?.admin?.name ||
+          data?.user?.name ||
+          data?.name ||
           "User";
 
-        if (res.ok) {
-          setUserData((prev) => ({ ...prev, name: userName }));
-        }
+        setUserData((prev) => ({
+          ...prev,
+          name: userName,
+        }));
       } catch (err) {
-        console.error("Error fetching profile:", err);
+        console.error("Profile fetch failed:", err);
       }
     };
 
     fetchProfile();
 
-    // ✅ Listen for profile image updates from localStorage or custom event
+    // ✅ Live image update listener
     const updateImage = () => {
-      const newImage = localStorage.getItem("profileImage");
-      if (newImage) {
-        setUserData((prev) => ({ ...prev, image: newImage }));
-      }
+      if (!userId) return;
+      const stored = localStorage.getItem(`profileImage_${userId}`);
+      setUserData((prev) => ({ ...prev, image: stored || userPlaceholder }));
     };
 
-    // listen to both localStorage + custom event
-    window.addEventListener("storage", updateImage);
     window.addEventListener("profileImageUpdated", updateImage);
-
-    return () => {
-      window.removeEventListener("storage", updateImage);
-      window.removeEventListener("profileImageUpdated", updateImage);
-    };
+    return () => window.removeEventListener("profileImageUpdated", updateImage);
   }, []);
 
   return (
@@ -86,7 +85,7 @@ const Topbar = () => {
           )}
         </Link>
 
-        {/* 👤 Profile Image + Name */}
+        {/* 👤 Profile */}
         <Link href="/profile" className="flex items-center gap-3">
           <Image
             src={userData.image || userPlaceholder}
@@ -94,9 +93,10 @@ const Topbar = () => {
             width={42}
             height={42}
             className="rounded-full object-cover"
+            unoptimized
           />
           <p className="font-inter font-medium text-[#333333] text-[16px]">
-            {userData.name === "Loading..." ? "Loading..." : userData.name || "User"}
+            {userData.name}
           </p>
         </Link>
       </div>

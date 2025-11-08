@@ -20,7 +20,7 @@ const GrowthBar = ({ year = "2025" }) => {
       if (!token) return;
 
       try {
-        const res = await axios.get("https://ai-car-app-sandy.vercel.app/admin/user-list", {
+        const res = await axios.get("https://admin-dashboard.drivestai.com/admin/user-list", {
           headers: {
             Authorization: `Bearer ${token}`
           }

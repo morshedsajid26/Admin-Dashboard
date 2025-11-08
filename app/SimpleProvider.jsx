@@ -12,7 +12,7 @@ export function SimpleProvider({ children, adminId }) {
     if (!adminId) return; // safety check
  
     // 🔹 Fetch existing notifications (authenticated)
-    fetch("https://ai-car-app-sandy.vercel.app/api/notifications", {
+    fetch("https://admin-dashboard.drivestai.com/api/notifications", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -30,7 +30,7 @@ export function SimpleProvider({ children, adminId }) {
     // ✅ Authenticated Pusher client for private channels
     const pusher = new Pusher(PUSHER_KEY, {
       cluster: PUSHER_CLUSTER,
-      authEndpoint: "https://ai-car-app-sandy.vercel.app/api/pusher/auth",
+      authEndpoint: "https://admin-dashboard.drivestai.com/api/pusher/auth",
       auth: {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

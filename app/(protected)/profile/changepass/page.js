@@ -34,7 +34,7 @@ const Page = () => {
       console.log("Sending payload:", payload);
 
       const res = await fetch(
-        "https://ai-car-app-sandy.vercel.app/admin/change-password",
+        "https://admin-dashboard.drivestai.com/admin/change-password",
         {
           method: "PUT",
           headers: {

@@ -133,8 +133,8 @@ const Sidebar = ({className}) => {
                 href='/profile'
                 variant='child'
                 />
-                <Li liText='About Us'
-                href='/about/us'
+                <Li liText='Privacy Policy'
+                href='/privacy/policy'
                 variant='child'
                 />
                  <Li liText='Terms & Conditions'
@@ -142,10 +142,10 @@ const Sidebar = ({className}) => {
                variant='child'
 
                 />
-                <Li liText='Privacy Policy'
-                href='/privacy/policy'
-                variant='child'
-                />
+               <Li liText='Refund Policy'
+               href='/refund/policy'
+               variant='child'
+               />
               </ul>
              
             </li>

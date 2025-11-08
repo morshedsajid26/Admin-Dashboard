@@ -70,7 +70,7 @@ const Page = () => {
     try {
       setLoading(true);
 
-      const res = await fetch("https://ai-car-app-sandy.vercel.app/verify-otp", {
+      const res = await fetch("https://admin-dashboard.drivestai.com/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ otp, email }), 

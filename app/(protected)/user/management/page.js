@@ -6,7 +6,7 @@ import Image from "next/image";
 import Header from "@/app/component/Header";
 import Cookies from "js-cookie"; 
 
-const API_BASE = "https://ai-car-app-sandy.vercel.app";
+const API_BASE = "https://admin-dashboard.drivestai.com";
 const LIST_URL = `${API_BASE}/admin/user-list`; 
 const PAGE_SIZE = 10;
 

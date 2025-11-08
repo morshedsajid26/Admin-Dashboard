@@ -13,7 +13,7 @@ import GrowthBar from "../../component/GrowthBar";
 import { IoIosArrowDown } from "react-icons/io";
 import Container from "../../component/Container";
 
-const API_BASE = "https://ai-car-app-sandy.vercel.app";
+const API_BASE = "https://admin-dashboard.drivestai.com";
 
 /* ---------------- helpers ---------------- */
 const safeJson = async (res) => {

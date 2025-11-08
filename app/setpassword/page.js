@@ -4,7 +4,7 @@ import { FaRegEyeSlash } from "react-icons/fa6";
 import { IoEyeOutline } from "react-icons/io5";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const API_RESET = "https://ai-car-app-sandy.vercel.app/reset-password";
+const API_RESET = "https://admin-dashboard.drivestai.com/reset-password";
 
 export default function ResetPasswordPage() {
   const [showNewPass, setShowNewPass] = useState(false);

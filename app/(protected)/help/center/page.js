@@ -6,7 +6,7 @@ import { FaArrowTurnUp } from "react-icons/fa6";
 import Cookies from "js-cookie";
 
 
-const API_BASE = "https://ai-car-app-sandy.vercel.app";
+const API_BASE = "https://admin-dashboard.drivestai.com";
 const LIST_URL = `${API_BASE}/admin/tickets`;
 
 const CREATE_TICKET_URL = `${API_BASE}/user/create-ticket`;

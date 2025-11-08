@@ -5,7 +5,7 @@ const Page = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    contact: "",
+    phone: "",
     address: "",
   });
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ const Page = () => {
       }
 
       try {
-        const res = await fetch("https://ai-car-app-sandy.vercel.app/admin/profile", {
+        const res = await fetch("https://admin-dashboard.drivestai.com/admin/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -33,7 +33,7 @@ const Page = () => {
           setFormData({
             name: user.name || "",
             email: user.email || "",
-            contact: user.contact || user.phone ||  "",
+            phone:  user.phone ||  "",
             address: user.address || "",
           });
         } else {
@@ -67,7 +67,7 @@ const Page = () => {
     }
 
     try {
-      const response = await fetch("https://ai-car-app-sandy.vercel.app/admin/edit-profile", {
+      const response = await fetch("https://admin-dashboard.drivestai.com/admin/edit-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -97,13 +97,13 @@ const Page = () => {
       <p className="text-[24px] text-[#333333] font-inter">Edit Your Profile</p>
 
       <form onSubmit={handleSubmit} className="w-full mt-6">
-        {["name", "email", "contact", "address"].map((field) => (
+        {["name", "email", "phone", "address"].map((field) => (
           <div key={field} className="mt-4">
             <label
               className="text-[#333333] text-[16px] font-inter capitalize"
               htmlFor={field}
             >
-              {field === "contact" ? "Contact No" : field}
+              {field === "phone" ? "Contact No" : field}
             </label>
             <input
               className="w-[481px] mt-2 border border-[#015093] rounded-[5px] py-[13px] px-4 text-[16px]"

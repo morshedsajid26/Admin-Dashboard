@@ -6,6 +6,8 @@ import Image from "next/image";
 import { MdOutlineCameraAlt } from "react-icons/md";
 import Link from "next/link";
 
+// ✅ Import Default Profile Image
+import profile from "@/public/profile.png";
 
 const tabs = [
   { href: "/profile", label: "Edit Profile" },
@@ -19,55 +21,40 @@ const Page = ({ children }) => {
 
   const [profileData, setProfileData] = useState({
     name: "",
-    image: "",
+    image: profile, // ✅ default placeholder
     userId: "",
   });
+
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Load saved image & Fetch name from API
+  // ✅ Fetch Profile Data
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          console.warn("No token found in localStorage!");
-          setLoading(false);
-          return;
-        }
+        if (!token) return setLoading(false);
 
-        const res = await fetch("https://ai-car-app-sandy.vercel.app/admin/profile", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await fetch("https://admin-dashboard.drivestai.com/admin/profile", {
+          headers: { Authorization: `Bearer ${token}` }
         });
 
-        const data = await res.json();
-        console.log("Profile API Response:", data);
+        const result = await res.json();
+        console.log("Profile API:", result);
 
-        if (res.ok && data) {
-          const userId =
-            data._id ||
-            data.user?._id ||
-            data.user?.id ||
-            data.user?.email ||
-            "guest";
+        const user = result.data || result.user || result;
+        const userId = user._id || user.id || "guest";
 
-          localStorage.setItem("currentUserId", userId);
+        localStorage.setItem("currentUserId", userId);
 
-          const savedImage = localStorage.getItem(`profileImage_${userId}`);
+        const savedImage = localStorage.getItem(`profileImage_${userId}`);
 
-          setProfileData({
-            name: data.name || data.user?.name || "No name found",
-            image: savedImage || profile,
-            userId,
-          });
-        } else {
-          console.error("Unexpected API response:", data);
-        }
+        setProfileData({
+          name: user.name || "No name found",
+          image: savedImage || user.image || profile,
+          userId,
+        });
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        console.log("Profile Fetch Error:", error);
       } finally {
         setLoading(false);
       }
@@ -76,7 +63,7 @@ const Page = ({ children }) => {
     fetchProfile();
   }, []);
 
-  // 🔹 Handle image change
+  // ✅ Handle Image Change Locally
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file || !profileData.userId) return;
@@ -86,11 +73,8 @@ const Page = ({ children }) => {
       const newImage = reader.result;
       setProfileData((prev) => ({ ...prev, image: newImage }));
 
-      // ✅ Save image for this specific user
       localStorage.setItem(`profileImage_${profileData.userId}`, newImage);
-      localStorage.setItem("profileImage", newImage); // for backward compatibility
 
-      // ✅ Trigger event so Topbar updates instantly
       window.dispatchEvent(new Event("profileImageUpdated"));
     };
     reader.readAsDataURL(file);
@@ -109,14 +93,15 @@ const Page = ({ children }) => {
       </div>
 
       <div className="w-[254px] flex flex-col items-center mx-auto">
-        {/* 🔹 Profile Image */}
+        {/* ✅ Profile Image */}
         <div className="relative">
           <Image
-            src={profileData.image}
+            src={profileData.image || profile}
             alt="profile"
             width={150}
             height={150}
             className="rounded-full object-cover"
+            unoptimized
           />
           <div className="w-[30px] h-[30px] flex items-center justify-center bg-[#FEFEFE] rounded-full absolute bottom-0 right-0">
             <input
@@ -133,12 +118,12 @@ const Page = ({ children }) => {
           </div>
         </div>
 
-        {/* 🔹 Name Display */}
+        {/* ✅ Name Display */}
         <p className="text-[20px] font-medium font-inter text-[#333333] mt-4 mb-6">
-          {loading ? "Loading..." : profileData.name || "No name found"}
+          {loading ? "Loading..." : profileData.name}
         </p>
 
-        {/* 🔹 Tabs */}
+        {/* ✅ Tabs */}
         <div className="flex justify-between gap-[30px]">
           {tabs.map((t) => {
             const isActive = pathname === t.href;
