@@ -4,10 +4,10 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { AiOutlineStop } from "react-icons/ai";
 import Image from "next/image";
 import Header from "@/app/component/Header";
-import Cookies from "js-cookie"; 
+import Cookies from "js-cookie";
 
 const API_BASE = "https://admin-dashboard.drivestai.com";
-const LIST_URL = `${API_BASE}/admin/user-list`; 
+const LIST_URL = `${API_BASE}/admin/user-list`;
 const PAGE_SIZE = 10;
 
 function StopIcon() {
@@ -56,7 +56,6 @@ export default function AgentApprovalTable() {
     return out;
   }, [page, totalPages]);
 
-  
   useEffect(() => {
     let off = false;
     (async () => {
@@ -64,7 +63,8 @@ export default function AgentApprovalTable() {
         setLoading(true);
         setErr("");
 
-        const token = Cookies.get("token") || localStorage.getItem("token") || "";
+        const token =
+          Cookies.get("token") || localStorage.getItem("token") || "";
         const url = `${LIST_URL}?page=${page}&limit=${PAGE_SIZE}`; // include paging if needed
         console.log("fetching users:", url);
 
@@ -81,16 +81,16 @@ export default function AgentApprovalTable() {
           try {
             const j = await res.json();
             msg = j?.error || j?.message || msg;
-          } catch (err) {
-            
-          }
+          } catch (err) {}
           throw new Error(msg);
         }
 
         const body = await res.json();
         console.log("fetch success body:", body);
 
-        const list = Array.isArray(body) ? body : body.users || body.data || body.items || [];
+        const list = Array.isArray(body)
+          ? body
+          : body.users || body.data || body.items || [];
         const total =
           (typeof body.total === "number" ? body.total : undefined) ||
           Number(body?.meta?.total) ||
@@ -106,7 +106,9 @@ export default function AgentApprovalTable() {
           email: u.email || "unknown@example.com",
           mobile: u.phone || u.mobile || "",
           date: u.createdAt ? fmtDate(u.createdAt) : u.date || "",
-          avatar: u.avatar || u.photoUrl || u.avatarUrl || u.image ,
+          avatar: u.avatar || u.photoUrl || u.avatarUrl || u.image,
+          hasActiveSubscription: u.hasActiveSubscription,
+          isTrialUsed: u.isTrialUsed ,
         }));
 
         if (!off) {
@@ -127,11 +129,9 @@ export default function AgentApprovalTable() {
     };
   }, [page]);
 
-  
-
   const goPrev = () => setPage((p) => Math.max(1, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
-  
+
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
       <Header />
@@ -145,12 +145,14 @@ export default function AgentApprovalTable() {
       <table className=" w-full text-left table-fixed mt-[18px]">
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
-            <th className="py-3 pr-4 w-[10%]">User ID</th>
-            <th className="py-3 pr-4 w-[22%]">Full Name</th>
-            <th className="py-3 pr-4 w-[22%] ">Email</th>
-            <th className="py-3 pr-4 w-[20%]">Mobile Number</th>
-            <th className="py-3 pr-2 w-[20%]">Created Date</th>
-            <th className="py-3 pr-2 ">Action</th>
+            <th className="py-3 pr-4 w-[5%]">User ID</th>
+            <th className="py-3 pr-4 w-[15%]">Full Name</th>
+            <th className="py-3 pr-4 w-[15%] ">Email</th>
+            <th className="py-3 pr-4 w-[10%]">Mobile Number</th>
+            <th className="py-3 pr-2 w-[10%]">Created Date</th>
+            <th className="py-3 pr-4 w-[10%]">Subscribe</th>
+            <th className="py-3 pr-4 w-[10%]">Trial Used</th>
+            <th className="py-3 pr-2 w-[5%] ">Action</th>
           </tr>
         </thead>
 
@@ -164,9 +166,7 @@ export default function AgentApprovalTable() {
           )}
 
           {currentRows.map((r) => {
-            const src = r.avatar?.startsWith("/")
-              ? r.avatar
-              : r.avatar || "/";
+            const src = r.avatar?.startsWith("/") ? r.avatar : r.avatar || "/";
             return (
               <tr key={r.id || r.sl} className="align-middle">
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px] whitespace-nowrap">
@@ -200,6 +200,14 @@ export default function AgentApprovalTable() {
                 <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">
                   {r.date}
                 </td>
+                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">
+                  {r.hasActiveSubscription ? "Yes" : "No"}
+                </td>
+
+                {/* NEW COLUMN 2 */}
+                <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">
+                  {r.isTrialUsed ? "Yes" : "No"}
+                </td>
 
                 <td className="py-4 pr-2">
                   <button
@@ -217,7 +225,6 @@ export default function AgentApprovalTable() {
         </tbody>
       </table>
 
-     
       <div className="mt-6 flex justify-center">
         <nav className="inline-flex items-center gap-4" aria-label="Pagination">
           <button

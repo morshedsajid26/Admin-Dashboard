@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import Link from "next/link";
 import { useNotifications } from "../SimpleProvider";
-import userPlaceholder from "@/public/user.png";
+import userPlaceholder from "@/public/profile.png";
 
 const Topbar = () => {
   const { unreadCount } = useNotifications();

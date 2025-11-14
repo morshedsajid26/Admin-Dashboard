@@ -10,46 +10,46 @@ const CARS_URL = `${API_BASE}/admin/cars`;
 const PAGE_SIZE = 10;
 
 
-function Badge({ children, color }) {
-  const cls =
-    color === "blue"
-      ? "text-[#49A0E6] bg-[#49A0E6]/10 ring-1 ring-[#49A0E6]/20"
-      : "text-[#DC4600] bg-[#DC4600]/10 ring-1 ring-[#DC4600]/20";
-  return (
-    <span className={`inline-flex items-center rounded-[5px] px-6 py-[9px] text-[16px] font-inter ${cls}`}>
-      {children}
-    </span>
-  );
-}
+// function Badge({ children, color }) {
+//   const cls =
+//     color === "blue"
+//       ? "text-[#49A0E6] bg-[#49A0E6]/10 ring-1 ring-[#49A0E6]/20"
+//       : "text-[#DC4600] bg-[#DC4600]/10 ring-1 ring-[#DC4600]/20";
+//   return (
+//     <span className={`inline-flex items-center rounded-[5px] px-6 py-[9px] text-[16px] font-inter ${cls}`}>
+//       {children}
+//     </span>
+//   );
+// }
 
-function OutlineBtn({ children, tone = "slate", onClick }) {
-  const tones = {
-    blue:  "text-[#49A0E6] ring-1 ring-inset ring-[#49A0E6]/20 hover:bg-[#49A0E6]/10",
-    red:   "text-[#DC4600] ring-1 ring-inset ring-[#DC4600]/20 hover:bg-[#DC4600]/10",
-    slate: "text-slate-600 ring-1 ring-inset ring-slate-300 hover:bg-slate-50",
-  };
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`inline-flex items-center rounded-md px-6 py-[9px] text-[16px] font-inter cursor-pointer ${tones[tone]} transition`}
-    >
-      {children}
-    </button>
-  );
-}
+// function OutlineBtn({ children, tone = "slate", onClick }) {
+//   const tones = {
+//     blue:  "text-[#49A0E6] ring-1 ring-inset ring-[#49A0E6]/20 hover:bg-[#49A0E6]/10",
+//     red:   "text-[#DC4600] ring-1 ring-inset ring-[#DC4600]/20 hover:bg-[#DC4600]/10",
+//     slate: "text-slate-600 ring-1 ring-inset ring-slate-300 hover:bg-slate-50",
+//   };
+//   return (
+//     <button
+//       type="button"
+//       onClick={onClick}
+//       className={`inline-flex items-center rounded-md px-6 py-[9px] text-[16px] font-inter cursor-pointer ${tones[tone]} transition`}
+//     >
+//       {children}
+//     </button>
+//   );
+// }
 
-function ActionCell({ status }) {
-  const s = String(status || "pending").toLowerCase();
-  if (s === "approved") return <Badge color="blue">Approved</Badge>;
-  if (s === "rejected") return <Badge color="red">Rejected</Badge>;
-  return (
-    <div className="flex items-center gap-3 text-[16px] font-inter">
-      <OutlineBtn tone="blue">Approve</OutlineBtn>
-      <OutlineBtn tone="red">Reject</OutlineBtn>
-    </div>
-  );
-}
+// function ActionCell({ status }) {
+//   const s = String(status || "pending").toLowerCase();
+//   if (s === "approved") return <Badge color="blue">Approved</Badge>;
+//   if (s === "rejected") return <Badge color="red">Rejected</Badge>;
+//   return (
+//     <div className="flex items-center gap-3 text-[16px] font-inter">
+//       <OutlineBtn tone="blue">Approve</OutlineBtn>
+//       <OutlineBtn tone="red">Reject</OutlineBtn>
+//     </div>
+//   );
+// }
 
 function Person({ name, avatar }) {
   const isLocal = typeof avatar === "string" && avatar.startsWith("/");
@@ -195,15 +195,15 @@ export default function AgentApprovalTable() {
       <table className="min-w-[920px] w-full text-left table-fixed mt-[18px]">
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
-            <th className="py-3 pr-4 w-[5%]">SL No</th>
-            <th className="py-3 pr-2 w-[7%]">Car Name</th>
-            <th className="py-3 pr-2 w-[10%]">Location</th>
-            <th className="py-3 pr-2 w-[5%]">Price</th>
-            <th className="py-3 pr-4 w-[5%]">Margin</th>
-            <th className="py-3 pr-4 w-[10%]">Agent Name</th>
-            <th className="py-3 pr-2 w-[7%]">Date Added</th>
-            <th className="py-3 pr-4 w-[5%]">Details</th>
-            <th className="py-3 pr-2 w-[10%] text-center ">Action</th>
+            <th className="py-3 pr-4 w-[10%]">SL No</th>
+            <th className="py-3 pr-2 w-[15%]">Car Name</th>
+            <th className="py-3 pr-2 w-[15%]">Location</th>
+            <th className="py-3 pr-2 w-[10%]">Price</th>
+            {/* <th className="py-3 pr-4 w-[5%]">Margin</th> */}
+            {/* <th className="py-3 pr-4 w-[10%]">Agent Name</th> */}
+            <th className="py-3 pr-2 w-[10%]">Date Added</th>
+            <th className="py-3 pr-4 w-[10%]">Details</th>
+            {/* <th className="py-3 pr-2 w-[10%] text-center ">Action</th> */}
           </tr>
         </thead>
 
@@ -220,8 +220,8 @@ export default function AgentApprovalTable() {
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.car}</td>
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.location}</td>
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.price}</td>
-              <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.margin}</td>
-              <td className="py-4 pr-4"><Person name={r.name} avatar={r.avatar} /></td>
+              {/* <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.margin}</td> */}
+              {/* <td className="py-4 pr-4"><Person name={r.name} avatar={r.avatar} /></td> */}
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.date}</td>
               <td className="py-4 pr-2">
                 <button
@@ -232,7 +232,7 @@ export default function AgentApprovalTable() {
                   <EyeIcon />
                 </button>
               </td>
-              <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
+              {/* <td className="py-4 pr-4"><ActionCell status={r.status} /></td> */}
             </tr>
           ))}
         </tbody>

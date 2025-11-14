@@ -1,7 +1,9 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 const Page = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -81,6 +83,9 @@ const Page = () => {
 
       if (response.ok) {
         setMessage("✅ Profile updated successfully!");
+        setTimeout(() => {
+         window.location.reload();
+      });
       } else {
         setMessage(`❌ ${result.message || "Failed to update profile."}`);
       }
@@ -91,6 +96,7 @@ const Page = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="w-[481px] flex flex-col items-center mx-auto mt-[26px]">
@@ -126,6 +132,7 @@ const Page = () => {
             }`}
           >
             {loading ? "Saving..." : "Save Change"}
+            
           </button>
         </div>
 
