@@ -10,9 +10,9 @@ const API_BASE = "https://admin-dashboard.drivestai.com";
 const LIST_URL = `${API_BASE}/admin/user-list`;
 const PAGE_SIZE = 10;
 
-function StopIcon() {
-  return <AiOutlineStop className="h-6 w-6 text-white" />;
-}
+// function StopIcon() {
+//   return <AiOutlineStop className="h-6 w-6 text-white" />;
+// }
 
 function fmtDate(d) {
   const dt = new Date(d);
@@ -145,14 +145,14 @@ export default function AgentApprovalTable() {
       <table className=" w-full text-left table-fixed mt-[18px]">
         <thead>
           <tr className="bg-white text-[18px] font-inter font-semibold text-[#333333]">
-            <th className="py-3 pr-4 w-[5%]">User ID</th>
+            <th className="py-3 pr-4 w-[10%]">User ID</th>
             <th className="py-3 pr-4 w-[15%]">Full Name</th>
             <th className="py-3 pr-4 w-[15%] ">Email</th>
             <th className="py-3 pr-4 w-[10%]">Mobile Number</th>
             <th className="py-3 pr-2 w-[10%]">Created Date</th>
             <th className="py-3 pr-4 w-[10%]">Subscribe</th>
             <th className="py-3 pr-4 w-[10%]">Trial Used</th>
-            <th className="py-3 pr-2 w-[5%] ">Action</th>
+            {/* <th className="py-3 pr-2 w-[5%] ">Action</th> */}
           </tr>
         </thead>
 
@@ -209,7 +209,7 @@ export default function AgentApprovalTable() {
                   {r.isTrialUsed ? "Yes" : "No"}
                 </td>
 
-                <td className="py-4 pr-2">
+                {/* <td className="py-4 pr-2">
                   <button
                     type="button"
                     aria-label={`Block ${r.name}`}
@@ -218,7 +218,7 @@ export default function AgentApprovalTable() {
                   >
                     <StopIcon />
                   </button>
-                </td>
+                </td> */}
               </tr>
             );
           })}
