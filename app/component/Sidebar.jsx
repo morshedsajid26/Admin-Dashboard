@@ -68,9 +68,16 @@ const Sidebar = ({className}) => {
             
             />
 
+            <Li icon={<MdOutlineHelpCenter className='w-6 h-6'/>}
+            liText='Help Center'
+            href='/help/center'
+            
+            />
             
 
-            <li        
+            
+
+            {/* <li        
            
             className='relative font-inter font-medium text-[16px] hover:text-[#FEFEFE] hover:bg-[#015093] pt-3 transition-all duration-300 cursor-pointer rounded-r-[5px] group'
             
@@ -97,15 +104,16 @@ const Sidebar = ({className}) => {
               variant='child'
                 
                 />
-                {/* <Li liText='Reports'
+                <Li liText='Reports'
                 href='/reports'
                 variant='child'
-                /> */}
+                />
                 
                
               </ul>
              
-            </li>
+            </li> */}
+
 
 
             <li        
