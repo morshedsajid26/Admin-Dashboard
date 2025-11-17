@@ -9,6 +9,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { usePathname, useRouter } from "next/navigation";
 import Pusher from "pusher-js";
 import { useNotifications } from "@/app/SimpleProvider";
+import toast, { Toaster } from "react-hot-toast";
 
 const PAGE_SIZE = 10;
 
@@ -127,54 +128,52 @@ export default function NotificationsPage() {
   }, [PUSHER_KEY, PUSHER_CLUSTER, setNotifications]);
 
   // ✅ Fixed Delete Function (backend + UI sync)
-  async function handleDelete(idOrLocal) {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("User not authenticated. Please login again.");
-        return;
-      }
-
-      const id = idOrLocal;
-
-      const response = await fetch(
-        `https://admin-dashboard.drivestai.com/admin/notification/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          
-        }
-      );
-
-      const result = await response.json();
-      console.log("Delete response:", result);
-
-      if (!response.ok) {
-        console.error("Delete failed:", result);
-        alert("Failed to delete notification!");
-        return;
-      }
-
-      // Remove from UI
-      setNotifications((prev) =>
-        prev.filter(
-          (n) =>
-            n.id !== id &&
-            n._id !== id &&
-            n.notification_id !== id &&
-            n.__localIdx !== id
-        )
-      );
-
-      console.log(`Notification ${id} deleted successfully`);
-      alert("Notification deleted successfully!");
-    } catch (err) {
-      console.error("Delete failed:", err);
-      alert("Something went wrong while deleting!");
+ async function handleDelete(idOrLocal) {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("User not authenticated. Please login again.");
+      return;
     }
+
+    const id = idOrLocal;
+
+    const response = await fetch(
+      `https://admin-dashboard.drivestai.com/admin/notification/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const result = await response.json();
+    console.log("Delete response:", result);
+
+    if (!response.ok) {
+      toast.error(result?.message || "Failed to delete notification!");
+      return;
+    }
+
+    // Remove from UI
+    setNotifications((prev) =>
+      prev.filter(
+        (n) =>
+          n.id !== id &&
+          n._id !== id &&
+          n.notification_id !== id &&
+          n.__localIdx !== id
+      )
+    );
+
+    toast.success("Notification deleted successfully!");
+  } catch (err) {
+    console.error("Delete failed:", err);
+    toast.error("Something went wrong while deleting!");
   }
+}
+
 
   // Time converter
   function timeAgo(timestamp) {
@@ -193,6 +192,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="w-full p-7 bg-white overflow-x-auto rounded-[10px]">
+      <Toaster position="top-center" />
       {/* Header */}
       <div className="flex items-center gap-[14px]">
         <IoMdArrowBack

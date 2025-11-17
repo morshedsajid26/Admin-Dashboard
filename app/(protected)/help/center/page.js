@@ -33,18 +33,18 @@ function ActionCell({ status }) {
   return <Badge color="yellow">{status}</Badge>;
 }
 
-function EyeIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" stroke="white" strokeWidth="2" />
-      <circle cx="12" cy="12" r="3" stroke="white" strokeWidth="2" />
-    </svg>
-  );
-}
+// function EyeIcon() {
+//   return (
+//     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+//       <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" stroke="white" strokeWidth="2" />
+//       <circle cx="12" cy="12" r="3" stroke="white" strokeWidth="2" />
+//     </svg>
+//   );
+// }
 
-function TurnIcon() {
-  return <FaArrowTurnUp className="text-white rotate-[270deg] w-6 h-6" />;
-}
+// function TurnIcon() {
+//   return <FaArrowTurnUp className="text-white rotate-[270deg] w-6 h-6" />;
+// }
 
 export default function AgentApprovalTable() {
   const [page, setPage] = useState(1);
@@ -174,7 +174,7 @@ console.log(userdata);
             <th className="py-3 pr-4 w-[15%]">Mobile Number</th>
             <th className="py-3 pr-2 w-[25%]">Message</th>
             <th className="py-3 pr-2 w-[15%]">Status</th>
-            <th className="py-3 pr-2 w-[15%]">Action</th>
+            {/* <th className="py-3 pr-2 w-[15%]">Action</th> */}
           </tr>
         </thead>
 
@@ -189,7 +189,7 @@ console.log(userdata);
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.mobile}</td>
               <td className="py-4 pr-4 text-[#333333] font-inter text-[16px]">{r.message}</td>
               <td className="py-4 pr-4"><ActionCell status={r.status} /></td>
-              <td className="py-4 pr-2">
+              {/* <td className="py-4 pr-2">
                 <div className="flex gap-3">
                   <button
                     type="button"
@@ -206,7 +206,7 @@ console.log(userdata);
                     <TurnIcon />
                   </button>
                 </div>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
